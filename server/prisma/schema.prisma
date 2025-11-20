@@ -17,8 +17,44 @@ model User {
   age       Int
 }
 
+model Patient {
+  id            Int            @id @default(autoincrement())
+  name          String
+  tutorName     String
+  age           Int
+  species       PatientSpecie
+  consultation Consultation[]
+}
+
+enum PatientSpecie {
+  SHEEP
+  CAT
+  PIG
+  COW
+  HORSE
+  DOG
+}
+
 model Test {
   id   Int    @id @default(autoincrement())
   name String
   age  Int
+}
+
+enum ConsultType {
+  FIRST
+  VACINATION
+  RETURN
+  CHECKUP
+}
+
+model Consultation {
+  id          Int      @id @default(autoincrement())
+  datetime    DateTime
+  type        ConsultType
+  description String
+  doctorName  String
+
+  patientId Int
+  patient   Patient @relation(fields: [patientId], references: [id])
 }
