@@ -9,7 +9,6 @@ import TopBarLogo from "./logo-citi-topbar.svg";
 import CalendarIcon from "./calendar_month.svg";
 import ClockIcon from "./alarm.svg";
 
-export { LogoCITi };
 export { SheepPic };
 export { CatPic };
 export { PigPic };

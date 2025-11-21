@@ -64,7 +64,9 @@ const formSchema = z.object({
     consultDate: z.date({ 
         error: "Insira a data de consulta"
     }),
-    consultTime: z.string().min(1, "Insira o horário da consulta"),
+    // No seu schema Zod
+    consultTime: z.string().min(1, "Insira o horário")
+        .refine((val) => val !== "00:00", { message: "Defina um horário válido para o atendimento" }),
     description: z.string().min(1, "Insira uma descrição"),
 })
 type RegisterFormValues = z.infer<typeof formSchema> // tipagem inferida do esquema
@@ -80,7 +82,7 @@ export default function Register(){
             age: "",
             consultType: undefined,
             consultDate: undefined, 
-            consultTime: "",
+            consultTime: "00:00",
             description: "",
         }
     })
@@ -90,8 +92,9 @@ export default function Register(){
         console.log("Formulário válido:", data)
     }
     return (
-        <>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+        <div className="mx-4 md:mx-10 lg:mx-[194px] mt-[25px]">
+            <p className="text-[48px] font-bold">Cadastro</p>
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-[20px] flex flex-col">
                 {/* Bloco 1 - nome do pet e do tutor */}
                 <div className="flex flex-col md:flex-row gap-6 w-full">
                     <div className="flex-1 space-y-2 relative pb-1">
@@ -99,7 +102,7 @@ export default function Register(){
                         <Input 
                             id="patientName"
                             placeholder="Digite aqui..."
-                            className="h-12 w-full border-black"
+                            className="h-[50px] w-full border-black"
                             {...register("patientName")}
                         />
                         {errors.patientName && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.patientName.message}</p>}
@@ -109,7 +112,7 @@ export default function Register(){
                         <Input 
                             id="tutorName"
                             placeholder="Digite aqui..."
-                            className="h-12 w-full border-black"
+                            className="h-[50px] w-full border-black"
                             {...register("tutorName")}
                         />
                         {errors.tutorName && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.tutorName.message}</p>}
@@ -117,13 +120,13 @@ export default function Register(){
                 </div>
 
                 {/* Bloco 2 - Seletor da espécie */}
-                <div className="w-full space-y-4 mt-5 relative pb-1">
+                <div className="w-full space-y-4 mt-[24px] relative pb-1">
                     <Label htmlFor="species" className="text-base font-bold">Qual é a espécie do paciente?</Label>
                     <Controller
                         name="species"
                         control={control}
                         render={({field}) => (
-                            <div className="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-8 lg:gap-[60px]">
+                            <div className="flex flex-wrap justify-center lg:justify-start gap-[60px] sm:gap-8 lg:gap-[60px]">
                                 {Object.entries(speciesAssets).map(([key, image]) => {
                                     const species = Number(key)
                                     const isSelected = field.value === species;
@@ -132,7 +135,7 @@ export default function Register(){
                                         <div
                                             key={key}
                                             onClick={() => field.onChange(species)}
-                                            className={cn("w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 p-3 rounded-md transition-all hover:bg-gray-100", isSelected && "bg-gray-200")}
+                                            className={cn("w-[120px] h-[120px] sm:w-28 sm:h-28 lg:w-32 lg:h-32 p-[10px] rounded-md transition-all hover:bg-gray-100", isSelected && "bg-gray-200")}
                                         >
                                             <img src={image.src} alt={key} className={`w-full h-full object-contain cursor-pointer ${(Number(key) === PetSpecies.PIG) && 'scale-x-[-1]'}`}/>
                                         </div>
@@ -145,13 +148,13 @@ export default function Register(){
                 </div>
 
                 {/* Bloco 3 - Idade do paciente e tipo de consulta */}
-                <div className="flex flex-col md:flex-row gap-6 w-full mt-5">
+                <div className="flex flex-col md:flex-row gap-6 w-full mt-[24px]">
                     <div className="flex-1 space-y-2 relative pb-1">
                         <Label htmlFor="age" className="text-base font-bold">Idade do paciente</Label>
                         <Input 
                             id="age"
                             placeholder="Digite aqui..."
-                            className="h-12 w-full border-black"
+                            className="h-[50px] w-full border-black"
                             {...register("age")}
                         />
                         {errors.age && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.age.message}</p>}
@@ -166,7 +169,7 @@ export default function Register(){
                                     onValueChange={(val) => field.onChange(Number(val))}
                                     value={field.value?.toString() || ""}
                                 >
-                                    <SelectTrigger className="h-12 w-full border-black">
+                                    <SelectTrigger className="h-[50px] w-full border-black">
                                         <SelectValue placeholder="Selecione aqui" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -182,13 +185,13 @@ export default function Register(){
                 </div>
 
                 {/* Bloco 4 - médico, data e horário */}
-                <div className="flex flex-col md:flex-row gap-6 w-full mt-5">
+                <div className="flex flex-col md:flex-row gap-6 w-full mt-[24px]">
                     <div className="w-full md:w-1/2 space-y-2 relative pb-1">
                         <Label htmlFor="doctorName" className="text-base font-bold">Médico Responsável</Label>
                         <Input 
                             id="doctorName"
                             placeholder="Digite aqui..."
-                            className="h-12 w-full border-black"
+                            className="h-[50px] w-full border-black"
                             {...register("doctorName")}
                         />
                         {errors.doctorName && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.doctorName.message}</p>}
@@ -208,7 +211,7 @@ export default function Register(){
                                             const date = e.target.valueAsDate; 
                                             if(date) field.onChange(date);
                                         }}
-                                        className="h-12 w-full border-black pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
+                                        className="h-[50px] w-full border-black pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
                                     />
 
                                     {/* configuração do datepicker */}
@@ -240,7 +243,7 @@ export default function Register(){
                                 id="consultTime"
                                 type="time"
                                 defaultValue="00:00"
-                                className="h-12 w-full border-black pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
+                                className="h-[50px] w-full border-black pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
                                 {...register("consultTime")}
                             />
                             <img src={ClockIcon.src} alt="clock-icon" className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
@@ -250,20 +253,20 @@ export default function Register(){
                 </div>
 
                 {/* Bloco 5 - descrição do problema */}
-                <div className="flex flex-col md:flex-row gap-6 w-full mt-5">
+                <div className="flex flex-col md:flex-row gap-6 w-full mt-[24px]">
                     <div className="w-full space-y-2 relative pb-1">
                         <Label htmlFor="description" className="text-base font-bold">Descrição do problema</Label>
                         <Textarea 
                             id="description"
                             placeholder="Digite aqui..."
-                            className="h-24 w-full border-black"
+                            className="h-[104px] w-full border-black"
                             {...register("description")}
                         />
                         {errors.description && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.description.message}</p>}
                     </div>
                 </div>
-                <Button type="submit" className="w-1/4 self-center bg-green-600 mt-5">Teste</Button>
+                <Button type="submit" className="w-[205px] h-[48px] mt-5 mb-5 self-end bg-[#50E678] rounded-[24px] text-[16px] hover:bg-[#50E678] lg:mt-[65px]">Finalizar Cadastro</Button>
             </form>
-        </>
+        </div>
     )
 }
