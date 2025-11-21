@@ -20,6 +20,10 @@ module.exports = {
     			sm: 'calc(var(--radius) - 4px)'
     		},
     		colors: {
+				verde:"#50E678",
+				verdeHover:"#2a9c48ff",
+				roxo:"#7D1AD7",
+				roxoHover:"#510994ff",
     			background: 'hsl(var(--background))',
     			foreground: 'hsl(var(--foreground))',
     			card: {

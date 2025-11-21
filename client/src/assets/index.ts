@@ -5,7 +5,7 @@ import PigPic from "./pig.png";
 import CowPic from "./cow.png";
 import HorsePic from "./horse.png";
 import DogPic from "./doggo.png";
-
+import TopBarLogo from "./logo-citi-topbar.svg";
 import CalendarIcon from "./calendar_month.svg";
 import ClockIcon from "./alarm.svg";
 
@@ -18,3 +18,5 @@ export { HorsePic };
 export { DogPic };
 export { CalendarIcon };
 export { ClockIcon };
+
+export { LogoCITi, TopBarLogo };
