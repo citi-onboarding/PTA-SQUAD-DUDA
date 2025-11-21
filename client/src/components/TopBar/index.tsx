@@ -3,14 +3,13 @@ import Image from "next/image";
 import Link from 'next/link';
 import {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
 
 export default function TopBar() {
     return(
-        <div className="flex flex-row justify-between items-center h-[70px] max-w-full min-w-full px-4 md:px-8 bg-white border-b border-[#D9D9D9] gap-4">
+        <div className="absolute top-0 left-0 z-50 flex flex-row justify-between items-center h-[70px] w-full px-4 md:px-8 bg-white border-b border-[#D9D9D9] gap-4">
 
             <div className=""> 
                 <Image src={TopBarLogo} alt="Logo Citi" className="h-10 w-auto" />
@@ -30,7 +29,7 @@ export default function TopBar() {
                             data-[state=active]:border-b-2 
                             data-[state=active]:border-[#50E678]"
                     >
-                                <Link href="#" className="hover:text-[#7D1AD7] ">Atendimento</Link>
+                                <Link href="/atendimento" className="hover:text-[#7D1AD7] ">Atendimento</Link>
                     </TabsTrigger>
 
                     <TabsTrigger value="cadastro"
@@ -44,7 +43,7 @@ export default function TopBar() {
                             data-[state=active]:border-b-2 
                             data-[state=active]:border-[#50E678]"
                     >
-                                <Link href="#" className="hover:text-[#7D1AD7] ">Cadastro</Link>
+                                <Link href="/cadastro" className="hover:text-[#7D1AD7] ">Cadastro</Link>
                     </TabsTrigger>
                 </TabsList>
             </Tabs>
