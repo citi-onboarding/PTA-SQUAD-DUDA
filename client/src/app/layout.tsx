@@ -1,21 +1,15 @@
-import type { Metadata } from "next";
+import "../styles/globals.css";
+import TopBar from "../components/TopBar";
 
-import "styles/globals.css";
-
-export const metadata: Metadata = {
-  title: "Next.js Boilerplate",
-  description: "A simple boilerplate for next.js",
-  manifest: "/manifest.json",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html>
-      <body>{children}</body>
+    <html lang="pt-BR">
+      <body className="pt-[70px]"> 
+        <TopBar />
+        <main>
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
