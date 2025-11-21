@@ -1,8 +1,9 @@
 "use client"
-import {useForm, Controller} from "react-hook-form"
+import {useForm, Controller, useController, Control} from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {z} from "zod"
-
+import {format} from "date-fns"
+import { ptBR } from "date-fns/locale"
 import { StaticImageData } from "next/dist/shared/lib/get-img-props"
 
 import { CalendarIcon, ClockIcon } from "@/assets"
@@ -14,6 +15,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectLabel, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover"
+import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/utils"
 
 enum PetSpecies {
     SHEEP,
@@ -46,17 +50,16 @@ const ConsultTypeValues: Record<ConsultType, string> = {
     [ConsultType.VACINACAO]: "Vacinação",
 }
 
+// esquema de configuração de validação
 const formSchema = z.object({
     patientName: z.string().min(1, "Insira o nome do paciente"),
     tutorName: z.string().min(1, "Insira o nome do tutor"),
-    species: z.coerce.number()
-        .refine((val) => val in PetSpecies, { message: "Selecione uma espécie" }),
+    species: z.custom<number>((val) => typeof val === 'number', "Selecione uma espécie"),
     age: z.string()
         .transform((val) => Number(val)) // converte para number para validar
         .refine((val) => !isNaN(val), { message: "Digite apenas números" })
         .refine((val) => val > 0, { message: "Informe a idade" }),
-    consultType: z.coerce.number()
-        .refine((val) => val in ConsultType, { message: "Selecione o tipo de consulta" }),
+    consultType: z.custom<number>((val) => typeof val === 'number', "Selecione o tipo de consulta"),
     doctorName: z.string().min(1, "Insira o nome do médico responsável"),
     consultDate: z.date({ 
         error: "Insira a data de consulta"
@@ -64,11 +67,22 @@ const formSchema = z.object({
     consultTime: z.string().min(1, "Insira o horário da consulta"),
     description: z.string().min(1, "Insira uma descrição"),
 })
-type RegisterFormValues = z.infer<typeof formSchema>
+type RegisterFormValues = z.infer<typeof formSchema> // tipagem inferida do esquema
 
 export default function Register(){
     const { register, control, handleSubmit, formState: {errors}} = useForm({
-        resolver: zodResolver(formSchema)
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            patientName: "",
+            tutorName: "",
+            doctorName: "",
+            species: undefined,
+            age: "",
+            consultType: undefined,
+            consultDate: undefined, 
+            consultTime: "",
+            description: "",
+        }
     })
 
     // função onSubmit de teste para verificar validação
@@ -103,16 +117,31 @@ export default function Register(){
                 </div>
 
                 {/* Bloco 2 - Seletor da espécie */}
-                <div className="w-full space-y-4 mt-5">
+                <div className="w-full space-y-4 mt-5 relative pb-1">
                     <Label htmlFor="species" className="text-base font-bold">Qual é a espécie do paciente?</Label>
-                    <div className="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-8 lg:gap-[60px]">
-                        {Object.entries(speciesAssets).map(([key, image]) => (
-                            <div key={key} className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 p-3 rounded-md transition-all">
-                                <img src={image.src} alt={key} className={`w-full h-full object-contain cursor-pointer ${(Number(key) === PetSpecies.PIG) && 'scale-x-[-1]'}`}/>
+                    <Controller
+                        name="species"
+                        control={control}
+                        render={({field}) => (
+                            <div className="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-8 lg:gap-[60px]">
+                                {Object.entries(speciesAssets).map(([key, image]) => {
+                                    const species = Number(key)
+                                    const isSelected = field.value === species;
+
+                                    return(
+                                        <div
+                                            key={key}
+                                            onClick={() => field.onChange(species)}
+                                            className={cn("w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 p-3 rounded-md transition-all hover:bg-gray-100", isSelected && "bg-gray-200")}
+                                        >
+                                            <img src={image.src} alt={key} className={`w-full h-full object-contain cursor-pointer ${(Number(key) === PetSpecies.PIG) && 'scale-x-[-1]'}`}/>
+                                        </div>
+                                    )
+                                })}
                             </div>
-                        ))}
-                    </div>
-                    
+                        )}
+                    />
+                    {errors.species && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.species.message}</p>}
                 </div>
 
                 {/* Bloco 3 - Idade do paciente e tipo de consulta */}
@@ -127,18 +156,28 @@ export default function Register(){
                         />
                         {errors.age && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.age.message}</p>}
                     </div>
-                    <div className="flex-1 space-y-2">
+                    <div className="flex-1 space-y-2 relative pb-1">
                         <Label htmlFor="consultType" className="text-base font-bold">Tipo da consulta</Label>
-                        <Select>
-                            <SelectTrigger className="h-12 w-full border-black">
-                                <SelectValue placeholder="Selecione aqui" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.entries(ConsultTypeValues).map(([key, label]) => (
-                                    <SelectItem key={key} value={label}>{label}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Controller 
+                            name="consultType"
+                            control={control}
+                            render={({field}) => (
+                                <Select
+                                    onValueChange={(val) => field.onChange(Number(val))}
+                                    value={field.value?.toString() || ""}
+                                >
+                                    <SelectTrigger className="h-12 w-full border-black">
+                                        <SelectValue placeholder="Selecione aqui" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {Object.entries(ConsultTypeValues).map(([key, label]) => (
+                                            <SelectItem key={key} value={key}>{label}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                        {errors.consultType && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.consultType.message}</p>}
                     </div>
                 </div>
 
@@ -154,17 +193,45 @@ export default function Register(){
                         />
                         {errors.doctorName && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.doctorName.message}</p>}
                     </div>
-                    <div className="w-full md:w-1/4 space-y-2">
+                    <div className="w-full md:w-1/4 space-y-2 relative pb-1">
                         <Label htmlFor="consultDate" className="text-base font-bold">Data do atendimento</Label>
-                        <div className="relative">
-                            <Input 
-                                id="consultDate"
-                                type="date"
-                                placeholder="dd/mm/aa"
-                                className="h-12 w-full border-black pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
-                            />
-                            <img src={CalendarIcon.src} alt="calendar-icon" className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none"/>
-                        </div>
+                        <Controller 
+                            name="consultDate"
+                            control={control}
+                            render={({field}) => (
+                                <div className="relative">
+                                    <Input 
+                                        id="consultDate"
+                                        type="date"
+                                        value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
+                                        onChange={(e) => { // conversão pra tipo Date
+                                            const date = e.target.valueAsDate; 
+                                            if(date) field.onChange(date);
+                                        }}
+                                        className="h-12 w-full border-black pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
+                                    />
+
+                                    {/* configuração do datepicker */}
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <button className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" >
+                                                <img src={CalendarIcon.src} alt="calendarIcon" className="h-5 w-5 text-gray-500" />
+                                            </button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0 bg-white shadow-lg border rounded-md z-[9999]" align="end">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                disabled={(date) => date < new Date("1900-01-01")}
+                                                locale={ptBR}
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
+                            )}
+                        />
+                        {errors.consultDate && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.consultDate.message}</p>}
                     </div>
                     <div className="w-full md:w-1/4 space-y-2 relative pb-1">
                         <Label htmlFor="consultTime" className="text-base font-bold">Horário do atendimento</Label>
@@ -195,7 +262,7 @@ export default function Register(){
                         {errors.description && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.description.message}</p>}
                     </div>
                 </div>
-                <button type="submit">Teste</button>
+                <Button type="submit" className="w-1/4 self-center bg-green-600 mt-5">Teste</Button>
             </form>
         </>
     )
