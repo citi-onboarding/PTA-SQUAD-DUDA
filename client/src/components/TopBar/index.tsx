@@ -1,4 +1,4 @@
-import logoCiti from './logo-citi-topbar.svg';
+import { TopBarLogo } from "@/assets";
 import Image from "next/image";
 import Link from 'next/link';
 import {
@@ -13,7 +13,7 @@ export default function TopBar() {
         <div className="flex flex-row justify-between items-center h-[70px] max-w-full min-w-full px-4 md:px-8 bg-white border-b border-[#D9D9D9] gap-4">
 
             <div className=""> 
-                <Image src={logoCiti} alt="Logo Citi" className="h-10 w-auto" />
+                <Image src={TopBarLogo} alt="Logo Citi" className="h-10 w-auto" />
             </div>
 
             <Tabs defaultValue="atendimento">
