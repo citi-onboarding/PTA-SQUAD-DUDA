@@ -8,6 +8,7 @@ import DogPic from "./doggo.png";
 import TopBarLogo from "./logo-citi-topbar.svg";
 import CalendarIcon from "./calendar_month.svg";
 import ClockIcon from "./alarm.svg";
+import xCloseIcon from "./X-icon.svg"
 
 export { SheepPic };
 export { CatPic };
@@ -17,5 +18,6 @@ export { HorsePic };
 export { DogPic };
 export { CalendarIcon };
 export { ClockIcon };
+export { xCloseIcon };
 
 export { LogoCITi, TopBarLogo };
