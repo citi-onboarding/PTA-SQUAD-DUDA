@@ -1,25 +1,25 @@
+"use client";
 import { TopBarLogo } from "@/assets";
 import Image from "next/image";
-import Link from 'next/link';
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function TopBar() {
-    return(
-        <div className="absolute top-0 left-0 z-50 flex flex-row justify-between items-center h-[70px] w-full px-4 md:px-8 bg-white border-b border-[#D9D9D9] gap-4">
+  const router = useRouter();
+  
+  return (
+    <div className="fixed top-0 left-0 z-50 flex flex-row justify-between items-center h-[70px] w-full px-4 md:px-8 bg-white border-b border-[#D9D9D9] gap-4">
+      <div className="">
+        <Image src={TopBarLogo} alt="Logo Citi" className="h-10 w-auto" />
+      </div>
 
-            <div className=""> 
-                <Image src={TopBarLogo} alt="Logo Citi" className="h-10 w-auto" />
-            </div>
-
-            <Tabs defaultValue="atendimento">
-                <TabsList className="bg-transparent p-0 gap-3 md:gap-6 mt-1.5">
-
-                    <TabsTrigger value="atendimento"
-                        className="
+      <Tabs defaultValue="">
+        <TabsList className="bg-transparent p-0 gap-3 md:gap-6 mt-1.5">
+          <TabsTrigger
+            value="attendings"
+            onClick={() => router.push("/Attendings")}
+            className="
                             rounded-none 
                             p-0 
                             pb-1 
@@ -28,12 +28,16 @@ export default function TopBar() {
                             data-[state=active]:text-black 
                             data-[state=active]:border-b-2 
                             data-[state=active]:border-[#50E678]"
-                    >
-                                <Link href="/atendimento" className="hover:text-[#7D1AD7] ">Atendimento</Link>
-                    </TabsTrigger>
+          >
+            <Link href="" className="hover:text-[#7D1AD7] ">
+              Atendimento
+            </Link>
+          </TabsTrigger>
 
-                    <TabsTrigger value="cadastro"
-                        className="
+          <TabsTrigger
+            value="register"
+            onClick={() => router.push("/Register")}
+            className="
                             rounded-none 
                             p-0 
                             pb-1 
@@ -42,18 +46,20 @@ export default function TopBar() {
                             data-[state=active]:text-black 
                             data-[state=active]:border-b-2 
                             data-[state=active]:border-[#50E678]"
-                    >
-                                <Link href="/cadastro" className="hover:text-[#7D1AD7] ">Cadastro</Link>
-                    </TabsTrigger>
-                </TabsList>
-            </Tabs>
-           
-            <div className="">
-                <p className="text-[#7D1AD7] text-sm font-medium">
-                    Made with <strong>&lt; &#x0002F; &gt;</strong> and{" "} <strong>&hearts;</strong> by CITi
-                </p>
-            </div>  
+          >
+            <Link href="" className="hover:text-[#7D1AD7] ">
+              Cadastro
+            </Link>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-        </div>
-    )
+      <div className="">
+        <p className="text-[#7D1AD7] text-sm font-medium">
+          Made with <strong>&lt; &#x0002F; &gt;</strong> and{" "}
+          <strong>&hearts;</strong> by CITi
+        </p>
+      </div>
+    </div>
+  );
 }
