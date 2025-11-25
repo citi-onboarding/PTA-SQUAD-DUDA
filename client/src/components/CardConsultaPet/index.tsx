@@ -38,7 +38,7 @@ export default function CardPet({dataHora, nomePet, nomeTutor, nomeVeterinario, 
   const imagemPet = especieImageMap[especiePet] || CatPic; 
 
   return(
-    <Card className={cn("flex flex-row justify-between rounded-2xl w-full max-w-xl p-5 mb-4 border-[0px]", cardColorClass)}>
+    <Card className={cn("flex flex-row justify-between rounded-2xl max-w-xl w-[490px] h-[135px] p-5 mb-4 border-[0px]", cardColorClass)}>
         <section className='flex flex-col items-center justify-center p-2 rounded-md font-bold text-sm bg-white/50'>
           <AlarmClock size={20} />
           <p className='max-w-10'>{dataHora}</p>
