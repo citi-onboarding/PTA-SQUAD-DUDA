@@ -6,12 +6,13 @@ import { useState } from "react"
 import { SheepPic, PigPic, CatPic, CowPic, HorsePic, DogPic } from "@/assets"
 
 import { BotaoAcao } from "@/components/Buttons/index"
+import { CirclePlus } from 'lucide-react';
 
 // imports shadcn
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CardPet from "@/components/CardConsultaPet/index"
-import { CirclePlus } from 'lucide-react';
+import Calendar28  from '@/components/ui/date-picker'
 
 export default function Attendings() {
 
@@ -20,7 +21,7 @@ export default function Attendings() {
 
   const consultasFicticias = [
     {
-      dataHora: "09:30",
+      dataHora: "12/02 09:30",
       nomePet: "Mimi",
       nomeTutor: "Carla Dias",
       nomeVeterinario: "Dr. Roberto Maia",
@@ -29,7 +30,7 @@ export default function Attendings() {
       realizado: false,
     },
     {
-      dataHora: "10:15",
+      dataHora: "20/02 10:15",
       nomePet: "Rex",
       nomeTutor: "João Martins",
       nomeVeterinario: "Dra. Helena Prado",
@@ -38,7 +39,7 @@ export default function Attendings() {
       realizado: false,
     },
     {
-      dataHora: "11:00",
+      dataHora: "27/09 11:00",
       nomePet: "Lola",
       nomeTutor: "Fernanda Alves",
       nomeVeterinario: "Dr. Paulo Cezar",
@@ -47,7 +48,7 @@ export default function Attendings() {
       realizado: false,
     },
     {
-      dataHora: "13:45",
+      dataHora: "15/06 13:45",
       nomePet: "Bilu",
       nomeTutor: "Carlos Neto",
       nomeVeterinario: "Dra. Maria Clara",
@@ -56,7 +57,7 @@ export default function Attendings() {
       realizado: false,
     },
     {
-      dataHora: "14:20",
+      dataHora: "02/02 14:20",
       nomePet: "Thor",
       nomeTutor: "Miguel Rocha",
       nomeVeterinario: "Dr. Henrique Silveira",
@@ -65,7 +66,7 @@ export default function Attendings() {
       realizado: false,
     },
     {
-      dataHora: "15:10",
+      dataHora: "05/12 15:10",
       nomePet: "Pingo",
       nomeTutor: "Bruna Farias",
       nomeVeterinario: "Dra. Camila Torres",
@@ -74,7 +75,7 @@ export default function Attendings() {
       realizado: false,
     },
     {
-      dataHora: "16:00",
+      dataHora: "31/12 16:00",
       nomePet: "Nina",
       nomeTutor: "Ricardo Mendes",
       nomeVeterinario: "Dr. Gustavo Lima",
@@ -85,7 +86,7 @@ export default function Attendings() {
   ];
   const consultasFicticiasRealizadas = [
     {
-      dataHora: "13:45",
+      dataHora: "11/11 13:45",
       nomePet: "Bilu",
       nomeTutor: "Carlos Neto",
       nomeVeterinario: "Dra. Maria Clara",
@@ -94,7 +95,7 @@ export default function Attendings() {
       realizado: true,
     },
     {
-      dataHora: "14:20",
+      dataHora: "09/03 14:20",
       nomePet: "Thor",
       nomeTutor: "Miguel Rocha",
       nomeVeterinario: "Dr. Henrique Silveira",
@@ -103,7 +104,7 @@ export default function Attendings() {
       realizado: true,
     },
     {
-      dataHora: "15:10",
+      dataHora: "18/04 15:10",
       nomePet: "Pingo",
       nomeTutor: "Bruna Farias",
       nomeVeterinario: "Dra. Camila Torres",
@@ -112,7 +113,7 @@ export default function Attendings() {
       realizado: true,
     },
     {
-      dataHora: "16:00",
+      dataHora: "22/01 16:00",
       nomePet: "Nina",
       nomeTutor: "Ricardo Mendes",
       nomeVeterinario: "Dr. Gustavo Lima",
@@ -150,19 +151,27 @@ export default function Attendings() {
           />
       </div>
       <Tabs defaultValue="Agendamento" className="mt-6">
-          <TabsList className="w-[240px] h-[50px]">
-            <TabsTrigger className="w-[150px] h-[36px]" value="Agendamento">Agendamento</TabsTrigger>
-            <TabsTrigger className="h-[36px]" value="Histórico">Histórico</TabsTrigger>
-          </TabsList>
+        
+        <div className="flex flex-row w-full justify-between">
+            <TabsList className="w-[240px] h-[50px]">
+              <TabsTrigger className="w-[150px] h-[36px]" value="Agendamento">Agendamento</TabsTrigger>
+              <TabsTrigger className="h-[36px]" value="Histórico">Histórico</TabsTrigger>
+            </TabsList>
+            <div className="flex gap-2">
+              <Calendar28/>
+              <Calendar28/>
+            </div>
+        </div>
+          
           <TabsContent value="Agendamento" className="w-full max-h-[270px] overflow-y-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 grid-flow-row-dense gap-2 mt-4 ">
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 grid-flow-row-dense gap-2 mt-4 ">
               {filteredConsultas.map((item, index) => (
                 <CardPet key={index} {...item} />
               ))}
             </div>
           </TabsContent>
           <TabsContent value="Histórico" className="w-full max-h-[270px] overflow-y-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 grid-flow-row-dense gap-2 mt-4 ">
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 grid-flow-row-dense gap-2 mt-4 ">
               {filteredConsultasRealizadas.map((item, index,) => (
                 <CardPet key={index} {...item} />
               ))}
