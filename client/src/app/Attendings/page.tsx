@@ -1,9 +1,6 @@
 "use client"
-
-import { StaticImageData } from "next/dist/shared/lib/get-img-props"
 import { useState } from "react"
-
-import { SheepPic, PigPic, CatPic, CowPic, HorsePic, DogPic } from "@/assets"
+import { format } from "date-fns"
 
 import { BotaoAcao } from "@/components/Buttons/index"
 import { CirclePlus } from 'lucide-react';
@@ -12,12 +9,44 @@ import { CirclePlus } from 'lucide-react';
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CardPet from "@/components/CardConsultaPet/index"
-import Calendar28  from '@/components/ui/date-picker'
+
+type DatePickerProps = {
+  value?: Date | undefined
+  onChange: (d?: Date) => void
+  label?: string
+}
+function DateFromPicker({ value, onChange, label = "De" }: DatePickerProps) {
+  return (
+    <div className="w-auto ">
+      <Input
+        type="date"
+        value={value ? format(value, "yyyy-MM-dd") : ""}
+        onChange={(e: any) => onChange(e.target.valueAsDate ?? undefined)}
+        className="h-[42px]"
+      />
+    </div>
+  )
+}
+function DateToPicker({ value, onChange, label = "Até" }: DatePickerProps) {
+  return (
+    <div className="w-auto">
+      <Input
+        type="date"
+        value={value ? format(value, "yyyy-MM-dd") : ""}
+        onChange={(e: any) => onChange(e.target.valueAsDate ?? undefined)}
+        className="h-[42px] "
+      />
+    </div>
+  )
+}
+
+
 
 export default function Attendings() {
-
   const [PesquisaTerm, setPesquisaTerm] = useState("")
   const [searchActive, setSearchActive] = useState("")
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
 
   const consultasFicticias = [
     {
@@ -65,24 +94,6 @@ export default function Attendings() {
       especiePet: "cavalo",
       realizado: false,
     },
-    {
-      dataHora: "05/12 15:10",
-      nomePet: "Pingo",
-      nomeTutor: "Bruna Farias",
-      nomeVeterinario: "Dra. Camila Torres",
-      tipoConsulta: "Check-up",
-      especiePet: "porco",
-      realizado: false,
-    },
-    {
-      dataHora: "31/12 16:00",
-      nomePet: "Nina",
-      nomeTutor: "Ricardo Mendes",
-      nomeVeterinario: "Dr. Gustavo Lima",
-      tipoConsulta: "Vacinação",
-      especiePet: "gato",
-      realizado: false,
-    },
   ];
   const consultasFicticiasRealizadas = [
     {
@@ -123,46 +134,78 @@ export default function Attendings() {
     },
   ];
 
-  const filteredConsultas = consultasFicticias.filter((CardPet) => 
-  CardPet.nomeVeterinario.toLowerCase().includes(searchActive.toLowerCase())
-  )
-  const filteredConsultasRealizadas = consultasFicticiasRealizadas.filter((CardPet) => 
-  CardPet.nomeVeterinario.toLowerCase().includes(searchActive.toLowerCase())
-  )
+   const parseDataHora = (str: string): Date | null => {
+    const regex = /(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})/
+    const m = str.match(regex)
+    if (!m) return null
+    const day = Number(m[1])
+    const month = Number(m[2]) - 1
+    const hour = Number(m[3])
+    const minute = Number(m[4])
+    const year = new Date().getFullYear()
+    return new Date(year, month, day, hour, minute)
+  }
+  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0)
+  const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999)
+
+   const inDateRange = (d: Date | null) => {
+    // se o card não tiver data e usuário definiu um filtro de data -> excluir
+    if (!d) return !(dateFrom || dateTo) // se não existe filtro de data, deixa passar
+    if (dateFrom && dateTo) return d >= startOfDay(dateFrom) && d <= endOfDay(dateTo)
+    if (dateFrom) return d >= startOfDay(dateFrom)
+    if (dateTo) return d <= endOfDay(dateTo)
+    return true
+  }
+
+  const filteredConsultas = consultasFicticias.filter((CardPet) => {
+    const matchesSearch = CardPet.nomeVeterinario.toLowerCase().includes(searchActive.toLowerCase())
+    const d = parseDataHora(CardPet.dataHora)
+    return matchesSearch && inDateRange(d)
+  })
+  const filteredConsultasRealizadas = consultasFicticiasRealizadas.filter((CardPet) => {
+    const matchesSearch = CardPet.nomeVeterinario.toLowerCase().includes(searchActive.toLowerCase())
+    const d = parseDataHora(CardPet.dataHora)
+    return matchesSearch && inDateRange(d)
+  })
+
+
 
   const handleBuscar = () => {
     setSearchActive(PesquisaTerm)
   }
 
   return (
-    <div className="flex flex-col mx-4 md:mx-8 lg:mx-[134px] xl:mx-[194px] h-[660px] justify-between">
+    <div className="flex flex-col mt-[25px] mx-4 md:mx-8 lg:mx-[134px] xl:mx-[194px] h-[660px] justify-between">
       <div>
         <p className="text-[48px] font-bold">Atendimento</p>
         <h1 className="text-[20px] mb-5 mt-4">Qual é o médico?</h1>
-      <div className="flex flex-row gap-4">
-          <Input className="w-[500px] h-[42px] border-gray-900" placeholder="Pesquise aqui..." 
-           onChange={(e) => setPesquisaTerm(e.target.value)}
-          />
+        <div className="flex flex-row gap-4">
+          <Input
+    className="w-[500px] h-[42px] border-gray-900"
+    placeholder="Pesquise aqui..."
+    value={PesquisaTerm}
+    onChange={(e: any) => setPesquisaTerm(e.target.value)}
+  />
           <BotaoAcao
             texto="Buscar"
             cor="bg-roxo hover:bg-roxoHover"
             width="116px"
             onClick={handleBuscar}
           />
-      </div>
-      <Tabs defaultValue="Agendamento" className="mt-6">
-        
-        <div className="flex flex-row w-full justify-between">
+        </div>
+        <Tabs defaultValue="Agendamento" className="mt-6">
+
+          <div className="flex flex-row w-full justify-between">
             <TabsList className="w-[240px] h-[50px]">
               <TabsTrigger className="w-[150px] h-[36px]" value="Agendamento">Agendamento</TabsTrigger>
               <TabsTrigger className="h-[36px]" value="Histórico">Histórico</TabsTrigger>
             </TabsList>
             <div className="flex gap-2">
-              <Calendar28/>
-              <Calendar28/>
+              <DateFromPicker value={dateFrom} onChange={setDateFrom} />
+              <DateToPicker value={dateTo} onChange={setDateTo} />
             </div>
-        </div>
-          
+          </div>
+
           <TabsContent value="Agendamento" className="w-full max-h-[270px] overflow-y-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 grid-flow-row-dense gap-2 mt-4 ">
               {filteredConsultas.map((item, index) => (
@@ -177,16 +220,16 @@ export default function Attendings() {
               ))}
             </div>
           </TabsContent>
-      </Tabs> 
-      </div>     
+        </Tabs>
+      </div>
       <div className="flex justify-end">
-          <BotaoAcao
-            texto="Nova Consulta"
-            icon={<CirclePlus />}
-            cor="bg-verde hover:bg-verdeHover"
-            width="180px"
-            onClick={() => {}}
-          />
+        <BotaoAcao
+          texto="Nova Consulta"
+          icon={<CirclePlus />}
+          cor="bg-verde hover:bg-verdeHover"
+          width="180px"
+          onClick={() => alert("Função de nova consulta ainda não implementada")}
+        />
       </div>
     </div>
   )
