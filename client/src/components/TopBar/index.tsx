@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import Attendings from "@/app/Attendings/page";
+import Attendings from "@/app/page";
 import Register from "@/app/Register/page";
 
 export default function TopBar() {
@@ -21,7 +21,7 @@ export default function TopBar() {
         <TabsList className="bg-transparent p-0 gap-3 md:gap-6 mt-1.5">
           <TabsTrigger
             value="attendings"
-            onClick={() => router.push('Attendings')}
+            onClick={() => router.push('/')}
             className="
                             rounded-none 
                             p-0 
@@ -32,7 +32,7 @@ export default function TopBar() {
                             data-[state=active]:border-b-2 
                             data-[state=active]:border-[#50E678]"
           >
-            <Link href="/Attendings" className="hover:text-[#7D1AD7] ">
+            <Link href="/" className="hover:text-[#7D1AD7] ">
               Atendimento
             </Link>
           </TabsTrigger>
