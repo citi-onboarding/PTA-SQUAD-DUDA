@@ -25,7 +25,7 @@ export function BotaoAcao({
       style={style}
       className={`
         flex flex-row items-center gap-[10px]
-        h-[48px] py-[12px] px-[32px]
+        h-[42px] py-[12px] px-[32px]
         rounded-[24px] text-base font-bold shadow-md
         text-white
         ${cor}
