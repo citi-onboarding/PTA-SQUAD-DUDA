@@ -14,21 +14,21 @@ export default function ConsultHistoricCard({dataHora, nomeVeterinario, tipoCons
 
   return(
     <Card className={cn("flex flex-row justify-between rounded-2xl  w-[510px] h-[82px] p-4 px-[24px] mb-6 bg-[#D9D9D9]")}>
-        <section className='flex flex-col p-[6px] items-center justify-center p-2 rounded-md font-bold text-sm bg-white/50'>
+        <div className='flex flex-col items-center justify-center p-2 rounded-md font-bold text-sm bg-white/50'>
           <p className='max-w-10'>{dataHora}</p>
-        </section>
+        </div>
        
-        <section className='text-base flex items-center font-bold'>
+        <div className='text-base flex items-center font-bold'>
           {tipoConsulta}
-        </section>
+        </div>
 
-        <section className='text-base flex items-center'>
+        <div className='text-base flex items-center'>
           {nomeVeterinario}
-        </section>
+        </div>
 
-        <section className='text-base flex items-center'>
+        <div className='text-base flex items-center'>
           <ArrowRight/>
-        </section>
+        </div>
     </Card>
   )
 }
