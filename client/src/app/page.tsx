@@ -48,7 +48,19 @@ export default function Attendings() {
   const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
 
-  const consultasFicticias = [
+  type TipoConsulta = "Primeira Consulta" | "Retorno" | "Check-up" | "Vacinação"
+
+  type EspeciePet = "cachorro" | "ovelha" | "vaca" | "cavalo" | "porco" | "gato";
+
+  const consultasFicticias: {
+    dataHora: string
+    nomePet: string
+    nomeTutor: string
+    nomeVeterinario: string
+    tipoConsulta: TipoConsulta
+    especiePet: EspeciePet
+    realizado: boolean
+  }[] = [
     {
       dataHora: "12/02 09:30",
       nomePet: "Mimi",
@@ -95,7 +107,15 @@ export default function Attendings() {
       realizado: false,
     },
   ];
-  const consultasFicticiasRealizadas = [
+  const consultasFicticiasRealizadas: {
+    dataHora: string
+    nomePet: string
+    nomeTutor: string
+    nomeVeterinario: string
+    tipoConsulta: TipoConsulta
+    especiePet: EspeciePet
+    realizado: boolean
+  }[] = [
     {
       dataHora: "11/11 13:45",
       nomePet: "Bilu",
