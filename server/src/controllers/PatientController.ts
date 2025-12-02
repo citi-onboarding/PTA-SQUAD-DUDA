@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { request } from "http";
+import prisma from "@database";
 import { Crud, Citi } from "src/global";
 
 class PatientController implements Crud {
@@ -54,6 +54,29 @@ class PatientController implements Crud {
         const { httpStatus, messageFromUpdate } = await this.citi.updateValue(id, updatedValues);
 
         return response.status(httpStatus).send({messageFromUpdate});
+    }
+
+    search = async(request: Request, response:Response) => {
+        const {name, tutorName, species} = request.query;
+        
+        try{
+            const patient = await prisma.patient.findFirst({
+                where: {
+                    name: String(name),
+                    tutorName: String(tutorName),
+                    species: String(species) as any
+                }
+            });
+
+            if(patient){
+                return response.status(200).send([patient]);
+            } else{
+                return response.status(400).send({message: "Paciente não encontrado"});
+            }
+        } catch(error:any){
+            console.error(error);
+            return response.status(500).send({error: "Erro no servidor"});
+        }
     }
 }
 
