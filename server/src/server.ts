@@ -1,35 +1,17 @@
 import routes from "./routes";
 import dotenv from "dotenv";
 import express from "express";
-import cors from "cors"
 import "@database";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
-const allowedOrigins = [
-    'http://localhost:3000', // Seu frontend em desenvolvimento
-    'https://pta-squad-duda.onrender.com', // Seu próprio domínio do backend (boas práticas)
-    'https://seu-frontend-no-render.onrender.com' // **SUBSTITUA** pelo domínio do seu frontend no Render
-];
-
-const corsOptions = {
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        // Permite requisições sem origem (como apps mobile ou curl) E as origens da lista
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            // Se a origem não estiver na lista, bloqueia
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos que você usa
-    allowedHeaders: ['Content-Type', 'Authorization'], // Headers que você envia
-    credentials: true // Importante se usar cookies/tokens de sessão
-};
 app.use(express.json());
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+}))
 app.use(routes);
 app.use(express.static(__dirname + "/public"));
 
