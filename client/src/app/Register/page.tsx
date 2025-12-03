@@ -1,5 +1,5 @@
 "use client"
-import {useForm, Controller, useController, Control} from "react-hook-form"
+import {useForm, Controller} from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {z} from "zod"
 import {format} from "date-fns"
@@ -13,11 +13,13 @@ import { SheepPic, PigPic, CatPic, CowPic, HorsePic, DogPic } from "@/assets"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectLabel, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/utils"
+import api from "@/api"
+import { managePatient } from "@/services/ApiService"
 
 enum PetSpecies {
     SHEEP,
@@ -28,10 +30,10 @@ enum PetSpecies {
     DOG
 }
 enum ConsultType{
-	PRIMEIRA_CONSULTA,
-	RETORNO,
+	FIRST,
+	RETURN,
 	CHECKUP,
-	VACINACAO
+	VACINATION
 }
 
 // mapeamento das informações padrão
@@ -44,10 +46,10 @@ const speciesAssets: Record<PetSpecies, StaticImageData> = {
     [PetSpecies.DOG]: DogPic,
 }
 const ConsultTypeValues: Record<ConsultType, string> = {
-    [ConsultType.PRIMEIRA_CONSULTA]: "Primeira consulta",
-    [ConsultType.RETORNO]: "Retorno",
+    [ConsultType.FIRST]: "Primeira consulta",
+    [ConsultType.RETURN]: "Retorno",
     [ConsultType.CHECKUP]: "Check-up",
-    [ConsultType.VACINACAO]: "Vacinação",
+    [ConsultType.VACINATION]: "Vacinação",
 }
 
 // esquema de configuração de validação
@@ -87,10 +89,30 @@ export default function Register(){
         }
     })
 
-    // função onSubmit de teste para verificar validação
-    const onSubmit = (data: RegisterFormValues) => {
-        console.log("Formulário válido:", data)
+    const onSubmit = async (data: RegisterFormValues) => {
+        try{
+            const patient = {
+                name: data.patientName, 
+                tutorName: data.tutorName,
+                age: Number(data.age),
+                species: PetSpecies[data.species]
+            }
+            const patientId = await managePatient(patient);
+
+            const appointmentPostData = {
+                tipo: ConsultType[data.consultType],
+                medico: data.doctorName,
+                data: data.consultDate,
+                descricao: data.description, 
+                pacienteId: patientId
+            }
+            const response = await api.post('/consultas', appointmentPostData);
+            console.log("Consulta cadastrada: ", response.data)
+        } catch(error: any){
+            console.error('Erro ao cadastrar as informações: ', error);
+        }
     }
+
     return (
         <div className="mx-4 md:mx-10 lg:mx-[194px] mt-[25px]">
             <p className="text-[48px] font-bold">Cadastro</p>
