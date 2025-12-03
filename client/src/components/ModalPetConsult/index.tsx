@@ -34,6 +34,7 @@ const ConsultTypeValues: Record<ConsultType, string> = {
 
 // esquema de configuração de validação do Zod
 const consultFormSchema = z.object({
+    patientName: z.string().optional(),
     consultType: z.custom<number>((val) => typeof val === 'number', "Selecione o tipo de consulta"),
     doctorName: z.string().min(1, "Insira o nome do médico responsável"),
     consultDate: z.date({ 
@@ -42,22 +43,25 @@ const consultFormSchema = z.object({
     consultTime: z.string().min(1, "Insira o horário")
         .refine((val) => val !== "00:00", { message: "Defina um horário válido para o atendimento" }),
 })
+// extende para caso venha da tela de atendimento
+const reformedSchema = consultFormSchema.extend({
+    patientName: z.string().min(1, "Insira o nome do paciente"),
+})
+
 type ConsultFormValues = z.infer<typeof consultFormSchema> // tipagem inferida do esquema
 
 interface ModalPetConsultProps{
     isOpen: boolean,
-    setIsopen: (open: boolean) => void
+    setIsopen: (open: boolean) => void,
+    patientId: number,
+    isAttendingPage?: boolean
 }
 
-// Configuração padrão na página que irá abrir o popup:
-// const [isModalopen, setIsModalOpen] = useState(false);
-// Página retorna componente do modal:
-// <ModalPetConsult isOpen={isModalopen} setIsopen={setIsModalOpen} />
-
-export default function ModalPetConsult({isOpen, setIsopen}:ModalPetConsultProps){
+export default function ModalPetConsult({isOpen, setIsopen, patientId, isAttendingPage=false}:ModalPetConsultProps){
     const {register, control, handleSubmit, formState: {errors}} = useForm({
-        resolver: zodResolver(consultFormSchema),
+        resolver: zodResolver(isAttendingPage ? reformedSchema : consultFormSchema),
         defaultValues: {
+            patientName: "",
             doctorName: "",
             consultType: undefined,
             consultDate: undefined, 
@@ -66,8 +70,20 @@ export default function ModalPetConsult({isOpen, setIsopen}:ModalPetConsultProps
     })
 
     // função onSubmit de teste para verificar validação
-    const onSubmit = (data: ConsultFormValues) => {
-        console.log("Formulário válido:", data)
+    const onSubmit = async (data: ConsultFormValues) => {
+        try{
+            const consult = {
+                patientName: data.patientName,
+                doctorName: data.doctorName,
+                consultType: data.consultType,
+                consultDate: data.consultDate,
+                consultTime: data.consultTime
+            };
+            console.log(consult);
+            
+        } catch(error:any){
+            console.error('Erro ao cadastrar as informações: ', error);
+        }
     }
 
     return (
@@ -90,6 +106,19 @@ export default function ModalPetConsult({isOpen, setIsopen}:ModalPetConsultProps
 
                 {/* Formulário do popup */}
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col mt-[13px]">
+                    {/* Bloco extra - Nome do paciente */}
+                    {isAttendingPage && (
+                        <div className="flex flex-col gap-[12px] mb-[12px] relative">
+                            <Label htmlFor="patientName" className="text-base font-bold">Nome do paciente</Label>
+                            <Input 
+                                id="patientName"
+                                placeholder="Digite aqui..."
+                                className="h-[50px] w-full rounded-[8px] border-black"
+                                {...register("patientName")}
+                            />
+                            {errors.patientName && <p className="absolute -bottom-4 left-0 text-red-500 text-xs">{errors.patientName.message}</p>}
+                        </div>
+                    )}
                     {/* Bloco 1 - Tipo de consulta e médico */}
                     <div className="flex gap-[12px] mb-[12px]">
                         <div className="w-full md:w-1/2 space-y-2 relative">

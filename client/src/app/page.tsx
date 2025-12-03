@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import { format } from "date-fns"
+import ModalPetConsult from "@/components/ModalPetConsult"
 
 import { BotaoAcao } from "@/components/Buttons/index"
 import { CirclePlus } from 'lucide-react';
@@ -40,13 +41,12 @@ function DateToPicker({ value, onChange, label = "Até" }: DatePickerProps) {
   )
 }
 
-
-
 export default function Attendings() {
   const [PesquisaTerm, setPesquisaTerm] = useState("")
   const [searchActive, setSearchActive] = useState("")
   const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
+  const [isModalopen, setIsModalOpen] = useState(false);
 
   type TipoConsulta = "Primeira Consulta" | "Retorno" | "Check-up" | "Vacinação"
 
@@ -248,9 +248,11 @@ export default function Attendings() {
           icon={<CirclePlus />}
           cor="bg-verde hover:bg-verdeHover"
           width="180px"
-          onClick={() => alert("Função de nova consulta ainda não implementada")}
+          onClick={() => setIsModalOpen(true)}
         />
       </div>
+
+      <ModalPetConsult isOpen={isModalopen} setIsopen={setIsModalOpen} patientId={0} isAttendingPage={true} />
     </div>
   )
 }
