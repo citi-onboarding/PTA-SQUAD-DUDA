@@ -71,7 +71,7 @@ class PatientController implements Crud {
             if(patient){
                 return response.status(200).send([patient]);
             } else{
-                return response.status(400).send({message: "Paciente não encontrado"});
+                return response.status(404).send({message: "Paciente não encontrado"});
             }
         } catch(error:any){
             console.error(error);

@@ -5,6 +5,10 @@ import {z} from "zod"
 import {format} from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { StaticImageData } from "next/dist/shared/lib/get-img-props"
+import api from "@/api"
+import { managePatient } from "@/services/ApiService"
+import { useState } from "react"
+import { ModalCadastro } from "@/components/ModalCadastro"
 
 import { CalendarIcon, ClockIcon } from "@/assets"
 import { SheepPic, PigPic, CatPic, CowPic, HorsePic, DogPic } from "@/assets"
@@ -18,8 +22,6 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/utils"
-import api from "@/api"
-import { managePatient } from "@/services/ApiService"
 
 enum PetSpecies {
     SHEEP,
@@ -89,6 +91,12 @@ export default function Register(){
         }
     })
 
+    // Controle de estado do modal
+    const [isModalopen, setIsModalOpen] = useState(false);
+    const handleRegister = () => {
+        setIsModalOpen(true);
+    }
+
     const onSubmit = async (data: RegisterFormValues) => {
         try{
             const patient = {
@@ -107,7 +115,10 @@ export default function Register(){
                 pacienteId: patientId
             }
             const response = await api.post('/consultas', appointmentPostData);
-            console.log("Consulta cadastrada: ", response.data)
+            console.log("Consulta cadastrada: ", response.data);
+
+            // Função que abre modal do email
+            handleRegister();
         } catch(error: any){
             console.error('Erro ao cadastrar as informações: ', error);
         }
@@ -289,6 +300,7 @@ export default function Register(){
                 </div>
                 <Button type="submit" className="w-[205px] h-[48px] mt-5 mb-5 self-end bg-[#50E678] rounded-[24px] text-[16px] hover:bg-[#50E678] lg:mt-[65px]">Finalizar Cadastro</Button>
             </form>
+            <ModalCadastro isOpen={isModalopen} setIsopen={setIsModalOpen} />
         </div>
     )
 }
