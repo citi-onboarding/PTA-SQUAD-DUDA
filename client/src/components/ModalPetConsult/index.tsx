@@ -92,13 +92,14 @@ export default function ModalPetConsult({isOpen, setIsopen, isAttendingPage=fals
             
             if (patientId ===0) return;
             const response = await api.post('/consultas', appointmentPostData);
-            
+
             alert("Consulta cadastrada com sucesso!");
             console.log("Consulta cadastrada com sucesso: ", response.data);
             setIsopen(false); // fecha o modal
             
         } catch(error: any) {
             console.error('Erro ao cadastrar as informações: ', error);
+            setIsopen(false);
         }
     }
 
