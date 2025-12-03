@@ -8,9 +8,7 @@ dotenv.config();
 
 const app = express();
 const allowedOrigins = [
-    'http://localhost:3000', // Seu frontend em desenvolvimento
-    'https://pta-squad-duda.onrender.com', // Seu próprio domínio do backend (boas práticas)
-    'https://seu-frontend-no-render.onrender.com' // **SUBSTITUA** pelo domínio do seu frontend no Render
+    'http://localhost:3000', // Frontend em desenvolvimento
 ];
 
 const corsOptions = {
