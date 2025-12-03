@@ -23,7 +23,12 @@ const modalCadastroSchema = z.object({
 })
 type ModalCadastroValues = z.infer<typeof modalCadastroSchema> // tipagem inferida do esquema
 
-export function ModalCadastro() {
+interface ModalCadastroProps {
+  isOpen: boolean,
+  setIsopen: (open: boolean) => void
+}
+
+export function ModalCadastro({isOpen, setIsopen}:ModalCadastroProps) {
 
   const {register, control, handleSubmit, formState: {errors}} = useForm({
           resolver: zodResolver(modalCadastroSchema),
@@ -38,11 +43,7 @@ export function ModalCadastro() {
     }
 
   return (
-    <Dialog>
-      
-        <DialogTrigger asChild>
-          <Button variant="outline">Open Dialog</Button>
-        </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsopen}>
         <DialogContent className="max-h-[95vh] max-w-[95vw] w-[423px] h-[408px] overflow-y-auto sm:rounded-xl rounded-3xl">
           <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
