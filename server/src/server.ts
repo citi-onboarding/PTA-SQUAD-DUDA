@@ -8,7 +8,8 @@ dotenv.config();
 
 const app = express();
 const allowedOrigins = [
-    'http://localhost:3000', // Frontend em desenvolvimento
+    'http://localhost:3000',
+    'https://pta-squad-duda.onrender.com/' // Frontend em desenvolvimento
 ];
 
 const corsOptions = {
