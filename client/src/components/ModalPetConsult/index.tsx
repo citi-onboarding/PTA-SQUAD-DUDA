@@ -56,7 +56,7 @@ interface ModalPetConsultProps{
     isOpen: boolean,
     setIsopen: (open: boolean) => void,
     isAttendingPage?: boolean,
-    idPaciente: number,
+    idPaciente?: number,
 }
 
 export default function ModalPetConsult({isOpen, setIsopen, isAttendingPage=false, idPaciente=0}:ModalPetConsultProps){

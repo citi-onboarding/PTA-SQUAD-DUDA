@@ -252,7 +252,7 @@ export default function Attendings() {
         />
       </div>
 
-      <ModalPetConsult isOpen={isModalopen} setIsopen={setIsModalOpen} patientId={0} isAttendingPage={true} />
+      <ModalPetConsult isOpen={isModalopen} setIsopen={setIsModalOpen} isAttendingPage={true} />
     </div>
   )
 }
