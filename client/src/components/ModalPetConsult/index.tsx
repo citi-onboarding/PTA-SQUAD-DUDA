@@ -5,6 +5,8 @@ import {z} from "zod"
 import {format} from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Image from "next/image"
+import api from "@/services/api"
+import { getPatientIdByName } from "@/services/ApiService"
 
 import { CalendarIcon, ClockIcon, TopBarLogo, xCloseIcon } from "@/assets"
 
@@ -19,22 +21,22 @@ import { Button } from "../ui/button"
 import { DialogTitle } from "@radix-ui/react-dialog"
 
 enum ConsultType{
-	PRIMEIRA_CONSULTA,
-	RETORNO,
+	FIRST,
+	RETURN,
 	CHECKUP,
-	VACINACAO
+	VACINATION
 }
 // mapeamento dos valores de tipos de consulta
 const ConsultTypeValues: Record<ConsultType, string> = {
-    [ConsultType.PRIMEIRA_CONSULTA]: "Primeira consulta",
-    [ConsultType.RETORNO]: "Retorno",
+    [ConsultType.FIRST]: "Primeira consulta",
+    [ConsultType.RETURN]: "Retorno",
     [ConsultType.CHECKUP]: "Check-up",
-    [ConsultType.VACINACAO]: "Vacinação",
+    [ConsultType.VACINATION]: "Vacinação",
 }
 
 // esquema de configuração de validação do Zod
 const consultFormSchema = z.object({
-    patientName: z.string().optional(),
+    patientName: z.string(),
     consultType: z.custom<number>((val) => typeof val === 'number', "Selecione o tipo de consulta"),
     doctorName: z.string().min(1, "Insira o nome do médico responsável"),
     consultDate: z.date({ 
@@ -53,11 +55,11 @@ type ConsultFormValues = z.infer<typeof consultFormSchema> // tipagem inferida d
 interface ModalPetConsultProps{
     isOpen: boolean,
     setIsopen: (open: boolean) => void,
-    patientId: number,
-    isAttendingPage?: boolean
+    isAttendingPage?: boolean,
+    idPaciente: number,
 }
 
-export default function ModalPetConsult({isOpen, setIsopen, patientId, isAttendingPage=false}:ModalPetConsultProps){
+export default function ModalPetConsult({isOpen, setIsopen, isAttendingPage=false, idPaciente=0}:ModalPetConsultProps){
     const {register, control, handleSubmit, formState: {errors}} = useForm({
         resolver: zodResolver(isAttendingPage ? reformedSchema : consultFormSchema),
         defaultValues: {
@@ -69,19 +71,33 @@ export default function ModalPetConsult({isOpen, setIsopen, patientId, isAttendi
         }
     })
 
-    // função onSubmit de teste para verificar validação
     const onSubmit = async (data: ConsultFormValues) => {
-        try{
-            const consult = {
-                patientName: data.patientName,
-                doctorName: data.doctorName,
-                consultType: data.consultType,
-                consultDate: data.consultDate,
-                consultTime: data.consultTime
-            };
-            console.log(consult);
+        try {
+            let patientId: number = 0;
+
+            if (isAttendingPage) {
+                // vem da tela de atendimento - necessidade de verificar id pelo nome
+                patientId = await getPatientIdByName(data.patientName);
+            } else{
+                patientId = idPaciente;
+            }
+
+            const appointmentPostData = {
+                tipo: ConsultType[data.consultType],
+                medico: data.doctorName,
+                data: data.consultDate,
+                descricao: "",
+                pacienteId: Number(patientId)
+            }
             
-        } catch(error:any){
+            if (patientId ===0) return;
+            const response = await api.post('/consultas', appointmentPostData);
+            
+            alert("Consulta cadastrada com sucesso!");
+            console.log("Consulta cadastrada com sucesso: ", response.data);
+            setIsopen(false); // fecha o modal
+            
+        } catch(error: any) {
             console.error('Erro ao cadastrar as informações: ', error);
         }
     }

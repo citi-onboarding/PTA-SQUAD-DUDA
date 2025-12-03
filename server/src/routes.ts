@@ -11,6 +11,7 @@ routes.delete("/user/:id", userController.delete);
 routes.patch("/user/:id", userController.update);
 
 routes.get("/patient/search", PatientController.search);
+routes.get("/patient/search/getIdByName", PatientController.getIdByName);
 routes.post("/patient", PatientController.create);
 routes.get("/patient", PatientController.get);
 routes.get("/patient/:id", PatientController.getOne);
