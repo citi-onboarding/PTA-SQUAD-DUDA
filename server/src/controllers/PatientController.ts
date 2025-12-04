@@ -78,6 +78,27 @@ class PatientController implements Crud {
             return response.status(500).send({error: "Erro no servidor"});
         }
     }
+
+    getIdByName = async(request: Request, response:Response) => {
+        const {name} = request.query;
+        
+        try {
+            const patient = await prisma.patient.findFirst({
+                where: {
+                    name: String(name)
+                }
+            });
+
+            if(patient){
+                return response.status(200).send([patient]);
+            } else{
+                return response.status(404).send({message: `Paciente ${name} não encontrado`});
+            }
+        } catch(error:any){
+            console.error(error);
+            return response.status(500).send({error: "Erro no servidor"});
+        }
+    }
 }
 
 export default new PatientController();
