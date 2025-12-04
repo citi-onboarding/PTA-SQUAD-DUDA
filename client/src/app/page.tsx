@@ -228,6 +228,8 @@ function DateToPicker({ value, onChange, label = "Até" }: DatePickerProps) {
         />
         {modalAberto && <ModalPetConsult isOpen={modalAberto} setIsopen={fecharModal} />}  
       </div>
+
+      <ModalPetConsult isOpen={isModalopen} setIsopen={setIsModalOpen} isAttendingPage={true} />
     </div>
   )
 }

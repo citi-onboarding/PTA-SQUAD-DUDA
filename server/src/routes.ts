@@ -10,6 +10,7 @@ routes.get("/user", userController.get);
 routes.delete("/user/:id", userController.delete);
 routes.patch("/user/:id", userController.update);
 
+routes.get("/patient/search/getIdByName", PatientController.getIdByName);
 routes.get("/patient/search", PatientController.search);
 routes.post("/patient", PatientController.create);
 routes.get("/patient", PatientController.get);

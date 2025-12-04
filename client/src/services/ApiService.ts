@@ -47,3 +47,20 @@ export async function managePatient(data: Omit<PatientData, 'id'>){
         throw error;
     }
 }
+
+export async function getPatientIdByName(name: string) {
+    try {
+        const response = await api.get('/patient/search/getIdByName', {
+            params: {
+                name: name
+            }
+        })
+
+        if (response.data.length > 0){ 
+            return response.data[0].id; // retorna o id
+        }
+    } catch(error:any){
+        alert("Paciente não encontrado. Faça o cadastro primeiro.");
+        throw error;
+    }
+}
