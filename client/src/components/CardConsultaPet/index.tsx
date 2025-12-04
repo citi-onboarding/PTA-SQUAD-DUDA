@@ -12,28 +12,36 @@ type CardConsultaPetProps = {
   nomePet: string;
   nomeTutor: string
   nomeVeterinario: string;
-  tipoConsulta: 'Primeira Consulta' | 'Retorno' | 'Check-up' | 'Vacinação' ;
-  especiePet: 'gato' | 'cachorro' | 'ovelha' | 'vaca' | 'porco' | 'cavalo'; //adaptei de acordo com ModalPetConsulta de Marcos
+  tipoConsulta: 'FIRST' | 'VACINATION' | 'RETURN' | 'CHECKUP'
+  especiePet: 'SHEEP' | 'CAT'| 'PIG' | 'COW' | 'HORSE' | 'DOG'
   realizado?: boolean;
+  onClick?: () => void;
 };
 
 const tipoConsultaColorMap: Record<CardConsultaPetProps['tipoConsulta'], string> = {
-  'Primeira Consulta': 'bg-[#BFB5FF]',
-  'Retorno': 'bg-[#ffa275]',
-  'Check-up': 'bg-[#9CFF95]',
-  'Vacinação': 'bg-[#AAE1FF]',
+  'FIRST': 'bg-[#BFB5FF]',
+  'RETURN': 'bg-[#ffa275]',
+  'CHECKUP': 'bg-[#9CFF95]' ,
+  'VACINATION': 'bg-[#AAE1FF]',
 
+};
+
+const tipoConsultaLabelMap: Record<CardConsultaPetProps['tipoConsulta'], string> = {
+  'FIRST': 'Primeira Consulta',
+  'RETURN': 'Retorno',
+  'CHECKUP': 'Check-up',
+  'VACINATION': 'Vacinação',
 };
 
 
 // Mapa que associa a string da espécie ao objeto de imagem importado
 const especieImageMap: Record<string, StaticImageData> = {
-  gato: CatPic,
-  cachorro: DogPic,
-  ovelha: SheepPic,
-  vaca: CowPic,
-  porco: PigPic,
-  cavalo: HorsePic,
+  CAT: CatPic,
+  DOG: DogPic,
+  SHEEP: SheepPic,
+  COW: CowPic,
+  PIG: PigPic,
+  HORSE: HorsePic,
 };
 
 export default function CardPet({dataHora, nomePet, nomeTutor, nomeVeterinario, tipoConsulta, especiePet, realizado}: CardConsultaPetProps) {
@@ -44,7 +52,7 @@ export default function CardPet({dataHora, nomePet, nomeTutor, nomeVeterinario, 
   
 
   return(
-    <Card className={cn("flex flex-row justify-between rounded-2xl gap-2 max-w-xl w-full h-[100px] p-3 border-[0px]", cardColorClass)}>
+    <Card className={cn("flex flex-row justify-between rounded-2xl gap-2 max-w-xl w-full h-[100px] p-3 border-[0px] hover:bg-opacity-60", cardColorClass)}>
         <section className='flex flex-col items-center justify-center p-1 rounded-md font-bold text-sm bg-white/50'>
           <AlarmClock size={20} />
           <p className='max-w-10'>{dataHora}</p>
@@ -60,7 +68,7 @@ export default function CardPet({dataHora, nomePet, nomeTutor, nomeVeterinario, 
         <section className='flex flex-col gap-1 items-center min-w-[120px]'>
           <Image src={imagemPet} alt={`Foto do pet`} width={50} height={50} />
           <div className='flex bg-white/50 p-1 px-1 justify-center text-sm rounded-md w-full text-center'>
-            {tipoConsulta}
+            {tipoConsultaLabelMap[tipoConsulta]}
           </div>
         </section>
     </Card>

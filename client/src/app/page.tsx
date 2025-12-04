@@ -1,16 +1,86 @@
 "use client"
-import { useState } from "react"
-import { format } from "date-fns"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams  } from "next/navigation";
+import { parseISO, format, isValid } from 'date-fns';
+import ModalPetConsult from "@/components/ModalPetConsult";
 
 import { BotaoAcao } from "@/components/Buttons/index"
 import { CirclePlus } from 'lucide-react';
 
-// imports shadcn
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CardPet from "@/components/CardConsultaPet/index"
+import Details from "@/app/DetailsExample/page" 
 
-type DatePickerProps = {
+import api from "@/services/api"
+
+type TipoConsulta = 'FIRST' | 'VACINATION' | 'RETURN' | 'CHECKUP';
+type EspeciePet = 'SHEEP' | 'CAT'| 'PIG' | 'COW' | 'HORSE' | 'DOG';
+
+type Consulta = {
+  id: number
+  dataHora: string 
+  nomePet: string
+  nomeTutor: string
+  nomeVeterinario: string
+  tipoConsulta: TipoConsulta
+  especiePet: EspeciePet
+}
+
+export default function Attendings() {
+  const [PesquisaTerm, setPesquisaTerm] = useState("")
+  const [searchActive, setSearchActive] = useState("")
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
+  const [consultas, setConsultas] = useState<Consulta[]>([])
+  const router = useRouter();
+  const params = useSearchParams();
+
+  const modalAberto = params.get("modal") === "true";
+
+  const abrirModal = () => router.push("?modal=true", { scroll: false });
+  const fecharModal = () => router.push("?", { scroll: false });
+
+  async function getConsultas() {
+    try {
+      const [cRes, pRes] = await Promise.all([api.get('/consultas'), api.get('/patient')]);
+      const rawConsultas = cRes.data?.values ?? cRes.data ?? [];
+      const rawPacientes = Array.isArray(pRes.data) ? pRes.data : (pRes.data?.values ?? []);
+
+      const patientsById: Record<number, any> = {};
+      for (const p of rawPacientes) if (p && typeof p.id === 'number') patientsById[p.id] = p;
+
+      const mapped = (Array.isArray(rawConsultas) ? rawConsultas : []).map((item: any) => {
+        let dataHora = String(item.datetime ?? item.dataHora ?? '');
+        try {
+          const d = parseISO(item.datetime ?? item.dataHora ?? '');
+          if (isValid(d)) dataHora = format(d, 'dd/MM HH:mm');
+        } catch (error) {
+          console.log(error);
+        }
+
+        const patient = patientsById[item.patientId];
+        return {
+          id: item.id,
+          dataHora,
+          nomePet: patient?.name ?? `Paciente #${item.patientId}`,
+          nomeTutor: patient?.tutorName ?? patient?.tutor ?? '—',
+          nomeVeterinario: item.doctorName ?? '—',
+          tipoConsulta: item.type,
+          especiePet: patient?.species ?? 'CAT'
+        } as Consulta;
+      });
+
+      setConsultas(mapped);
+    } catch (error) {
+      console.error("Erro ao carregar consultas/pacientes:", error);
+      setConsultas([]);
+    }
+  }
+
+  useEffect(() => { getConsultas(); }, []);
+
+  type DatePickerProps = {
   value?: Date | undefined
   onChange: (d?: Date) => void
   label?: string
@@ -40,121 +110,8 @@ function DateToPicker({ value, onChange, label = "Até" }: DatePickerProps) {
   )
 }
 
-
-
-export default function Attendings() {
-  const [PesquisaTerm, setPesquisaTerm] = useState("")
-  const [searchActive, setSearchActive] = useState("")
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
-
-  type TipoConsulta = "Primeira Consulta" | "Retorno" | "Check-up" | "Vacinação"
-
-  type EspeciePet = "cachorro" | "ovelha" | "vaca" | "cavalo" | "porco" | "gato";
-
-  const consultasFicticias: {
-    dataHora: string
-    nomePet: string
-    nomeTutor: string
-    nomeVeterinario: string
-    tipoConsulta: TipoConsulta
-    especiePet: EspeciePet
-    realizado: boolean
-  }[] = [
-    {
-      dataHora: "12/02 09:30",
-      nomePet: "Mimi",
-      nomeTutor: "Carla Dias",
-      nomeVeterinario: "Dr. Roberto Maia",
-      tipoConsulta: "Primeira Consulta",
-      especiePet: "gato",
-      realizado: false,
-    },
-    {
-      dataHora: "20/02 10:15",
-      nomePet: "Rex",
-      nomeTutor: "João Martins",
-      nomeVeterinario: "Dra. Helena Prado",
-      tipoConsulta: "Check-up",
-      especiePet: "cachorro",
-      realizado: false,
-    },
-    {
-      dataHora: "27/09 11:00",
-      nomePet: "Lola",
-      nomeTutor: "Fernanda Alves",
-      nomeVeterinario: "Dr. Paulo Cezar",
-      tipoConsulta: "Vacinação",
-      especiePet: "ovelha",
-      realizado: false,
-    },
-    {
-      dataHora: "15/06 13:45",
-      nomePet: "Bilu",
-      nomeTutor: "Carlos Neto",
-      nomeVeterinario: "Dra. Maria Clara",
-      tipoConsulta: "Retorno",
-      especiePet: "vaca",
-      realizado: false,
-    },
-    {
-      dataHora: "02/02 14:20",
-      nomePet: "Thor",
-      nomeTutor: "Miguel Rocha",
-      nomeVeterinario: "Dr. Henrique Silveira",
-      tipoConsulta: "Primeira Consulta",
-      especiePet: "cavalo",
-      realizado: false,
-    },
-  ];
-  const consultasFicticiasRealizadas: {
-    dataHora: string
-    nomePet: string
-    nomeTutor: string
-    nomeVeterinario: string
-    tipoConsulta: TipoConsulta
-    especiePet: EspeciePet
-    realizado: boolean
-  }[] = [
-    {
-      dataHora: "11/11 13:45",
-      nomePet: "Bilu",
-      nomeTutor: "Carlos Neto",
-      nomeVeterinario: "Dra. Maria Clara",
-      tipoConsulta: "Retorno",
-      especiePet: "vaca",
-      realizado: true,
-    },
-    {
-      dataHora: "09/03 14:20",
-      nomePet: "Thor",
-      nomeTutor: "Miguel Rocha",
-      nomeVeterinario: "Dr. Henrique Silveira",
-      tipoConsulta: "Primeira Consulta",
-      especiePet: "cavalo",
-      realizado: true,
-    },
-    {
-      dataHora: "18/04 15:10",
-      nomePet: "Pingo",
-      nomeTutor: "Bruna Farias",
-      nomeVeterinario: "Dra. Camila Torres",
-      tipoConsulta: "Check-up",
-      especiePet: "porco",
-      realizado: true,
-    },
-    {
-      dataHora: "22/01 16:00",
-      nomePet: "Nina",
-      nomeTutor: "Ricardo Mendes",
-      nomeVeterinario: "Dr. Gustavo Lima",
-      tipoConsulta: "Vacinação",
-      especiePet: "gato",
-      realizado: true,
-    },
-  ];
-
-   const parseDataHora = (str: string): Date | null => {
+  // ... (suas funções de parsing de data e filtros seguem iguais)
+  const parseDataHora = (str: string): Date | null => {
     const regex = /(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})/
     const m = str.match(regex)
     if (!m) return null
@@ -168,30 +125,30 @@ export default function Attendings() {
   const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0)
   const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999)
 
-   const inDateRange = (d: Date | null) => {
-    // se o card não tiver data e usuário definiu um filtro de data -> excluir
-    if (!d) return !(dateFrom || dateTo) // se não existe filtro de data, deixa passar
+  const inDateRange = (d: Date | null) => {
+    if (!d) return !(dateFrom || dateTo) 
     if (dateFrom && dateTo) return d >= startOfDay(dateFrom) && d <= endOfDay(dateTo)
     if (dateFrom) return d >= startOfDay(dateFrom)
     if (dateTo) return d <= endOfDay(dateTo)
     return true
   }
 
-  const filteredConsultas = consultasFicticias.filter((CardPet) => {
-    const matchesSearch = CardPet.nomeVeterinario.toLowerCase().includes(searchActive.toLowerCase())
-    const d = parseDataHora(CardPet.dataHora)
-    return matchesSearch && inDateRange(d)
-  })
-  const filteredConsultasRealizadas = consultasFicticiasRealizadas.filter((CardPet) => {
-    const matchesSearch = CardPet.nomeVeterinario.toLowerCase().includes(searchActive.toLowerCase())
-    const d = parseDataHora(CardPet.dataHora)
+  const dataAtual = new Date();
+
+  const baseFilteredConsultas = consultas.filter((consulta) => {
+    const matchesSearch = consulta.nomeVeterinario.toLowerCase().includes(searchActive.toLowerCase())
+    const d = parseDataHora(consulta.dataHora)
     return matchesSearch && inDateRange(d)
   })
 
+  const filteredConsultas = baseFilteredConsultas.filter(c => parseDataHora(c.dataHora) && parseDataHora(c.dataHora)! >= dataAtual);
+  const filteredConsultasRealizadas = baseFilteredConsultas.filter(c => parseDataHora(c.dataHora) && parseDataHora(c.dataHora)! < dataAtual);
 
+  const handleBuscar = () => setSearchActive(PesquisaTerm)
 
-  const handleBuscar = () => {
-    setSearchActive(PesquisaTerm)
+  // Função única para navegar para a página de detalhes
+  const handleViewDetails = (id: number) => {
+    router.push(`/details/${id}`);
   }
 
   return (
@@ -201,11 +158,11 @@ export default function Attendings() {
         <h1 className="text-[20px] mb-5 mt-4">Qual é o médico?</h1>
         <div className="flex flex-row gap-4">
           <Input
-    className="w-[500px] h-[42px] border-gray-900"
-    placeholder="Pesquise aqui..."
-    value={PesquisaTerm}
-    onChange={(e: any) => setPesquisaTerm(e.target.value)}
-  />
+            className="w-[500px] h-[42px] border-gray-900"
+            placeholder="Pesquise aqui..."
+            value={PesquisaTerm}
+            onChange={(e: any) => setPesquisaTerm(e.target.value)}
+          />
           <BotaoAcao
             texto="Buscar"
             cor="bg-roxo hover:bg-roxoHover"
@@ -228,15 +185,35 @@ export default function Attendings() {
 
           <TabsContent value="Agendamento" className="w-full max-h-[270px] overflow-y-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 grid-flow-row-dense gap-4 mt-4 ">
-              {filteredConsultas.map((item, index) => (
-                <CardPet key={index} {...item} />
+              {filteredConsultas.map(card => (
+                <div key={card.id} onClick={() => handleViewDetails(card.id)} className="cursor-pointer">
+                  {/* passei o onclick direto no elemento pois a div que os cards estão sendo renderizados meio que "agrupa" eles em um elemento só */}
+                  <CardPet 
+                    dataHora={card.dataHora}
+                    nomePet={card.nomePet}
+                    nomeTutor={card.nomeTutor}
+                    nomeVeterinario={card.nomeVeterinario}
+                    tipoConsulta={card.tipoConsulta}
+                    especiePet={card.especiePet}
+                  />
+                </div>
               ))}
             </div>
           </TabsContent>
           <TabsContent value="Histórico" className="w-full max-h-[270px] overflow-y-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 grid-flow-row-dense gap-4 mt-4 ">
-              {filteredConsultasRealizadas.map((item, index,) => (
-                <CardPet key={index} {...item} />
+              {filteredConsultasRealizadas.map(card => (
+                <div key={card.id} onClick={() => handleViewDetails(card.id)} className="cursor-pointer">
+                  <CardPet 
+                    dataHora={card.dataHora}
+                    nomePet={card.nomePet}
+                    nomeTutor={card.nomeTutor}
+                    nomeVeterinario={card.nomeVeterinario}
+                    tipoConsulta={card.tipoConsulta}
+                    especiePet={card.especiePet}
+                    realizado={true}
+                  />
+                </div>
               ))}
             </div>
           </TabsContent>
@@ -248,8 +225,9 @@ export default function Attendings() {
           icon={<CirclePlus />}
           cor="bg-verde hover:bg-verdeHover"
           width="180px"
-          onClick={() => alert("Função de nova consulta ainda não implementada")}
+          onClick={abrirModal}
         />
+        {modalAberto && <ModalPetConsult isOpen={modalAberto} setIsopen={fecharModal} />}  
       </div>
     </div>
   )
