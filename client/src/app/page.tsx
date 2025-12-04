@@ -10,7 +10,6 @@ import { CirclePlus } from 'lucide-react';
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CardPet from "@/components/CardConsultaPet/index"
-import Details from "@/app/DetailsExample/page" 
 
 import api from "@/services/api"
 
