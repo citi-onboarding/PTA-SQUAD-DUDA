@@ -1,10 +1,10 @@
 import Image, {StaticImageData} from "next/image";
-import catImg from "../../assets/cat.png";
-import dogImg from "../../assets/doggo.png";
-import horseImg from "../../assets/horse.png";
-import cowImg from "../../assets/cow.png";
-import pigImg from "../../assets/pig.png";
-import sheepImg from "../../assets/sheep.png";
+import catImg from "../../assets/cat.svg";
+import dogImg from "../../assets/dog.svg";
+import horseImg from "../../assets/horse.svg";
+import cowImg from "../../assets/cow.svg";
+import pigImg from "../../assets/pig.svg";
+import sheepImg from "../../assets/sheep.svg";
 
 interface PetAvatarProps {
     species: string; 
