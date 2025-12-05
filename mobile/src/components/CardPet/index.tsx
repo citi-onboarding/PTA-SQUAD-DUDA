@@ -1,7 +1,7 @@
 import { View, Text, Image } from 'react-native';
 import Card from "../ui/Card";
 import { CatPic, DogPic, SheepPic, CowPic, HorsePic, PigPic, Alarm } from '@assets';
-import {format} from 'date-fns'
+import {format, parseISO} from 'date-fns'
 
 type CardConsultaPetProps = {
   dataHora: string;
@@ -45,12 +45,10 @@ export default function CardPet({dataHora, nomePet, nomeTutor, nomeVeterinario, 
   const imagemPet = especieImageMap[especiePet] || CatPic; 
 
   // extrai data e hora
-  const dateTime = new Date(dataHora);
-  const data = format(dateTime, 'dd/MM');
-  const horario = format(dateTime, 'HH:mm');
+  const [data, horario] = dataHora.split(' ');
 
   return(
-    <Card className={`flex flex-row justify-between items-center rounded-2xl gap-2 max-w-xl w-[85%] h-[120px] p-6 border-[0px] hover:bg-opacity-60 ${cardColorClass}`}>
+    <Card className={`flex flex-row justify-between items-center rounded-2xl gap-2 max-w-xl w-full h-[120px] p-6 border-[0px] hover:bg-opacity-60 ${cardColorClass}`}>
         <View className='flex flex-col items-center justify-center gap-2 p-1 py-3 rounded-md font-bold text-sm bg-white/80'>
           <Alarm width={20} height={20} />
           <Text className='text-[14px] font-bold'>{data}</Text>
