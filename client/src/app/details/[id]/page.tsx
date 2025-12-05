@@ -108,13 +108,13 @@ export default function Detalhes() {
     }, [id]);
 
     return (
-        <div className="min-h-screen py-10 px-6">
+        <div className="min-h-screen md:py-10 py-7 pl-6 pr-6 md:pl-10">
         
             <header className="flex items-center gap-2">
                 <button className="hover:bg-gray-100 rounded-full transition-colors" onClick={() => router.push(`/`)}>
                     <ChevronLeft size={32} className="text-black" />
                 </button>
-                <h1 className="text-3xl font-[650]">
+                <h1 className="md:text-3xl font-[650] text-[26px]">
                     Detalhes da Consulta
                 </h1>
             </header>
@@ -126,32 +126,30 @@ export default function Detalhes() {
                         Paciente
                     </h2>
 
-                    <div className="flex gap-6 items-start">
+                    <div className="flex gap-6 items-start md:flex-row flex-col">
                         <PetAvatar 
                             species={paciente?.species ?? ''}
                             alt={`Foto de ${paciente?.name}`} 
                         />
 
-                        <div className="flex flex-col justify-between h-[299px]">
-                        <div>
-                            <h3 className="text-2xl font-bold capitalize">
-                                {paciente?.name}
-                            </h3>
-                            <p className="text-lg">
-                                {paciente?.age ? `${paciente.age} ${paciente.age > 1 ? "anos" : "ano"}` : ""}
-                            </p>
-                        </div>
-                        
-                        <div className="space-y-1">
-                            <p>
-                                <span className="capitalize">
-                                    {paciente?.tutorName}
-                                </span>
-                            </p>
-                            <p>
-                                {consulta?.doctorName}
-                            </p>
-                        </div>
+                        <div className="flex md:flex-col justify-between md:h-[299px] flex-row w-full md:w-auto">
+                            <div>
+                                <h3 className="text-2xl font-bold capitalize">
+                                    {paciente?.name}
+                                </h3>
+                                <p className="text-lg">
+                                    {paciente?.age ? `${paciente.age} ${paciente.age > 1 ? "anos" : "ano"}` : ""}
+                                </p>
+                            </div>
+                            
+                            <div className="md:space-y-1">
+                                <p className="capitalize text-2xl md:text-base md:font-normal">
+                                    {paciente?.tutorName}   
+                                </p>
+                                <p className="text-lg md:text-base">
+                                    {consulta?.doctorName}
+                                </p>
+                            </div>
                         </div>
                     </div>
 

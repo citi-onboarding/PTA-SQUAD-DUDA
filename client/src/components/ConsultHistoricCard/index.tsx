@@ -23,11 +23,11 @@ export default function ConsultHistoricCard({id, dataHora, nomeVeterinario, tipo
             </p>
         </div>
         
-        <div className='text-base flex items-center font-bold text-center'>
+        <div className='text-base flex items-center font-bold text-center text-xs md:text-base'>
             {tipoConsulta}
         </div>
 
-        <div className='text-base flex items-center text-center'>
+        <div className='text-base flex items-center text-center text-xs md:text-base'>
             {nomeVeterinario}
         </div>
 

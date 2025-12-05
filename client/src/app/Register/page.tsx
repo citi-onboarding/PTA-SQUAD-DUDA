@@ -133,7 +133,7 @@ export default function Register(){
 
     return (
         <div className="mx-4 md:mx-10 lg:mx-[194px] mt-[25px]">
-            <p className="text-[48px] font-bold">Cadastro</p>
+            <p className="md:text-[48px] font-bold text-[32px]">Cadastro</p>
             <form onSubmit={handleSubmit(onSubmit)} className="mt-[20px] flex flex-col">
                 {/* Bloco 1 - nome do pet e do tutor */}
                 <div className="flex flex-col md:flex-row gap-6 w-full">
