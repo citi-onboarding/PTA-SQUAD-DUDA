@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/utils"
+import { date } from "zod/v4/core/regexes.cjs"
 
 enum PetSpecies {
     SHEEP,
@@ -107,10 +108,16 @@ export default function Register(){
             }
             const patientId = await managePatient(patient);
 
+            const dateTime = new Date(data.consultDate);
+            const [hour, min] = data.consultTime.split(':').map(Number);
+            dateTime.setHours(hour);
+            dateTime.setMinutes(min);
+            dateTime.setSeconds(0);
+
             const appointmentPostData = {
                 tipo: ConsultType[data.consultType],
                 medico: data.doctorName,
-                data: data.consultDate,
+                data: dateTime,
                 descricao: data.description, 
                 pacienteId: patientId
             }
@@ -240,17 +247,25 @@ export default function Register(){
                                         id="consultDate"
                                         type="date"
                                         value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
-                                        onChange={(e) => { // conversão pra tipo Date
-                                            const date = e.target.valueAsDate; 
-                                            if(date) field.onChange(date);
+                                        onChange={(e) => {
+                                            const dataString = e.target.value;
+                                            
+                                            if (!dataString) {
+                                                field.onChange(undefined);
+                                                return;
+                                            }
+
+                                            const dataLocal = new Date(`${dataString}T00:00:00`);
+                                            field.onChange(dataLocal);
                                         }}
+                                        max="9999-12-31" // limite
                                         className="h-[50px] w-full border-black pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
                                     />
 
                                     {/* configuração do datepicker */}
                                     <Popover>
                                         <PopoverTrigger asChild>
-                                            <button className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" >
+                                            <button className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" type="button">
                                                 <img src={CalendarIcon.src} alt="calendarIcon" className="h-5 w-5 text-gray-500" />
                                             </button>
                                         </PopoverTrigger>
