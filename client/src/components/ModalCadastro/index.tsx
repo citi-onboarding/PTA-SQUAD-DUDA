@@ -17,6 +17,8 @@ import Image from "next/image";
 import {useForm, Controller} from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {z} from "zod"
+import api from "@/services/api";
+
 
 const modalCadastroSchema = z.object({
     email: z.string().min(1, "Insira o email do tutor"),
@@ -37,15 +39,30 @@ export function ModalCadastro({isOpen, setIsopen}:ModalCadastroProps) {
           }
       })
 
-   // função onSubmit de teste para verificar validação
-    const onSubmit = (data: ModalCadastroValues) => {
-        console.log("Formulário válido:", data)
-    }
+
+    const handleSendEmail = async (data: ModalCadastroValues) => {
+      try {
+        const emailPayload = {
+          userMail: data.email,
+          userName: "Tutor",
+          subjectText: "Comprovante de Cadastro - Clínica Veterinária"
+        };
+
+        await api.post('/mail', emailPayload);
+
+        alert('E-mail de comprovação enviado com sucesso!');
+        setIsopen(false); // Fecha o modal após o envio
+      } catch (error) {
+        console.error('Erro ao enviar e-mail:', error);
+        alert('Ocorreu um erro ao enviar o e-mail. Por favor, tente novamente.');
+      }
+    };
+
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsopen}>
         <DialogContent className="max-h-[95vh] max-w-[95vw] w-[423px] h-[408px] overflow-y-auto sm:rounded-xl rounded-3xl">
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(handleSendEmail)}>
           <DialogHeader>
             <div className="flex justify-center mt-[18px]"> 
                 <Image src={TopBarLogo} alt="Logo Citi" className="" />

@@ -2,6 +2,7 @@ import express from "express";
 import userController from "./controllers/UserController";
 import PatientController from "./controllers/PatientController";
 import AppointmentController from "./controllers/AppointmentController";
+import mailRoutes from "./services/mailRoutes";
 
 const routes = express.Router();
 
@@ -25,5 +26,8 @@ routes.post("/consultas", AppointmentController.create); // Cria uma nova consul
 routes.put("/consultas/:id", AppointmentController.update); // Atualiza uma consulta existente
 routes.delete("/consultas/:id", AppointmentController.delete); // Deleta uma consulta
 routes.get("/consultas/paciente/:patientId", AppointmentController.getByPatientId);
+
+// Rota do nomemailer
+routes.use('/mail', mailRoutes);
 
 export default routes;
