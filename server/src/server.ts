@@ -1,5 +1,5 @@
-import routes from "./routes";
 import dotenv from "dotenv";
+import routes from "./routes";
 import express from "express";
 import "@database";
 import cors from "cors";
@@ -10,8 +10,8 @@ const app = express();
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:8081', // mobile application
-    'https://pta-squad-duda.vercel.app/', // deployed web frontend
-    'https://pta-squad-duda.onrender.com/' // Frontend em desenvolvimento
+    'https://pta-squad-duda.vercel.app', // deployed web frontend (sem barra final)
+    'https://pta-squad-duda.onrender.com' // Frontend em desenvolvimento (sem barra final)
 ];
 
 const corsOptions = {
@@ -24,15 +24,13 @@ const corsOptions = {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos que você usa
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Métodos que você usa
     allowedHeaders: ['Content-Type', 'Authorization'], // Headers que você envia
     credentials: true // Importante se usar cookies/tokens de sessão
 };
 app.use(express.json());
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
-}))
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(routes);
 app.use(express.static(__dirname + "/public"));
 
