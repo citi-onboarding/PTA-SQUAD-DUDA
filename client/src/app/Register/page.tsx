@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/utils"
+import { date } from "zod/v4/core/regexes.cjs"
 
 enum PetSpecies {
     SHEEP,
@@ -107,10 +108,16 @@ export default function Register(){
             }
             const patientId = await managePatient(patient);
 
+            const dateTime = new Date(data.consultDate);
+            const [hour, min] = data.consultTime.split(':').map(Number);
+            dateTime.setHours(hour);
+            dateTime.setMinutes(min);
+            dateTime.setSeconds(0);
+
             const appointmentPostData = {
                 tipo: ConsultType[data.consultType],
                 medico: data.doctorName,
-                data: data.consultDate,
+                data: dateTime,
                 descricao: data.description, 
                 pacienteId: patientId
             }

@@ -19,6 +19,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Dialog, DialogClose, DialogContent, DialogHeader } from "../ui/dialog"
 import { Button } from "../ui/button"
 import { DialogTitle } from "@radix-ui/react-dialog"
+import { datetime } from "zod/v4/core/regexes.cjs"
 
 enum ConsultType{
 	FIRST,
@@ -82,10 +83,16 @@ export default function ModalPetConsult({isOpen, setIsopen, isAttendingPage=fals
                 patientId = idPaciente;
             }
 
+            const dateTime = new Date(data.consultDate);
+            const [hour, min] = data.consultTime.split(':').map(Number);
+            dateTime.setHours(hour);
+            dateTime.setMinutes(min);
+            dateTime.setSeconds(0);
+
             const appointmentPostData = {
                 tipo: ConsultType[data.consultType],
                 medico: data.doctorName,
-                data: data.consultDate,
+                data: dateTime,
                 descricao: "",
                 pacienteId: Number(patientId)
             }
