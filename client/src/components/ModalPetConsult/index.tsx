@@ -105,7 +105,7 @@ export default function ModalPetConsult({isOpen, setIsopen, isAttendingPage=fals
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsopen}>
-            <DialogContent className="sm:max-w-[824px] !sm:max-h-[493px] w-full px-[48px] py-[48px] bg-white !rounded-[24px] border-none [&>button]:hidden" aria-describedby={undefined}>
+            <DialogContent className="overflow-y-auto max-h-screen sm:max-w-[824px] !sm:max-h-[493px] w-full px-[48px] py-[48px] bg-white !rounded-[24px] border-none [&>button]:hidden" aria-describedby={undefined}>
                 {/* Botão de fechar o popup */}
                 <div className="absolute right-[48px] top-[48px] z-50">
                     <DialogClose className="w-[24px] h-[24px]">
@@ -114,10 +114,10 @@ export default function ModalPetConsult({isOpen, setIsopen, isAttendingPage=fals
                 </div>
                 <DialogHeader className="flex flex-col items-center justify-center space-y-4 relative">
                     <Image src={TopBarLogo} alt="Logo CITi Pet" className="w-[189px] h-auto"/>
-                    <DialogTitle className="text-[16px] !mt-[29px] flex flex-row gap-1">
+                    <DialogTitle className="text-[16px] !mt-[29px] flex md:flex-row gap-1 flex-col">
                         <p className="font-bold">O pet já está cadastrado no sistema!</p>
-                        <p>Preencha os dados da</p>
-                        <p className="font-bold">consulta</p>
+                        <p>Preencha os dados da <span className="font-bold">consulta</span></p>
+        
                     </DialogTitle>
                 </DialogHeader>
 
@@ -137,7 +137,7 @@ export default function ModalPetConsult({isOpen, setIsopen, isAttendingPage=fals
                         </div>
                     )}
                     {/* Bloco 1 - Tipo de consulta e médico */}
-                    <div className="flex gap-[12px] mb-[12px]">
+                    <div className="flex gap-[12px] mb-[12px] flex-col md:flex-row">
                         <div className="w-full md:w-1/2 space-y-2 relative">
                             <Label htmlFor="consultType" className="text-base font-bold">Tipo de consulta</Label>
                             <Controller 
@@ -174,7 +174,7 @@ export default function ModalPetConsult({isOpen, setIsopen, isAttendingPage=fals
                     </div>
 
                     {/* Bloco 2 - data e horário */}
-                    <div className="flex gap-[12px]">
+                    <div className="flex gap-[12px] md:flex-row flex-col">
                         <div className="w-full md:w-1/2 space-y-2 relative">
                             <Label htmlFor="consultDate" className="text-base font-bold">Data do atendimento</Label>
                             <Controller 

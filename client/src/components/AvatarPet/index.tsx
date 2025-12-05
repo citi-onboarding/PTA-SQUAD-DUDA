@@ -24,7 +24,7 @@ export default function PetAvatar({ species, alt }: PetAvatarProps) {
     const imageSrc = petImages[species.toUpperCase()];
 
     return (
-        <div className="relative w-[295px] h-[299px]">
+        <div className="relative w-full md:w-[295px] h-[299px]">
             <Image 
                 src={imageSrc} 
                 alt={alt} 

@@ -56,7 +56,7 @@ export default function TopBar() {
       </Tabs>
 
       <div>
-        <p className="text-[#7D1AD7] text-sm font-medium">
+        <p className="text-[#7D1AD7] md:text-sm font-medium text-xs">
           Made with <strong>&lt; / &gt;</strong> and{" "}
           <strong>&hearts;</strong> by CITi
         </p>

@@ -151,8 +151,8 @@ function DateToPicker({ value, onChange, label = "Até" }: DatePickerProps) {
 
     <div className="flex flex-col mt-[25px] mx-4 md:mx-8 lg:mx-[134px] xl:mx-[194px] h-[660px] justify-between">
       <div>
-        <p className="text-[48px] font-bold">Atendimento</p>
-        <h1 className="text-[20px] mb-5 mt-4">Qual é o médico?</h1>
+        <p className="md:text-[48px] text-[32px] font-bold">Atendimento</p>
+        <h1 className="md:text-[20px] text-lg mb-5 mt-4">Qual é o médico?</h1>
         <div className="flex flex-row gap-4">
           <Input
             className="w-[500px] h-[42px] border-gray-900"
@@ -169,13 +169,13 @@ function DateToPicker({ value, onChange, label = "Até" }: DatePickerProps) {
         </div>
         <Tabs defaultValue="Agendamento" className="mt-6">
 
-          <div className="flex flex-row w-full justify-between">
-            <TabsList className="w-[240px] h-[50px]">
+          <div className="flex md:flex-row flex-col w-full md:justify-between gap-4 items-center justify-center">
+            <TabsList className="md:w-[240px] h-[50px]">
               <TabsTrigger className="w-[150px] h-[36px]" value="Agendamento">Agendamento</TabsTrigger>
               <TabsTrigger className="h-[36px]" value="Histórico">Histórico</TabsTrigger>
             </TabsList>
             <div className="flex gap-2">
-              <DateFromPicker value={dateFrom} onChange={setDateFrom} />
+              <DateFromPicker value={dateFrom} onChange={setDateFrom}/>
               <DateToPicker value={dateTo} onChange={setDateTo} />
             </div>
           </div>
@@ -216,7 +216,7 @@ function DateToPicker({ value, onChange, label = "Até" }: DatePickerProps) {
           </TabsContent>
         </Tabs>
       </div>
-      <div className="flex justify-end">
+      <div className="flex md:justify-end mb-6 justify-center">
         <BotaoAcao
           texto="Nova Consulta"
           icon={<CirclePlus />}
