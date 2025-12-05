@@ -12,6 +12,8 @@ export async function SendMail(req: Request, res: Response){
             subjectText,
             html: mailTemplate(userName)
         };
+
+        console.log("tá indo");
         const mailResponse = await MailHandler(emailConfig);
         if (mailResponse) {
             res.status(200).json({ message: 'E-mail enviado com sucesso!' });

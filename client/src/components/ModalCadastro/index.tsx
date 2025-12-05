@@ -48,7 +48,9 @@ export function ModalCadastro({isOpen, setIsopen}:ModalCadastroProps) {
           subjectText: "Comprovante de Cadastro - Clínica Veterinária"
         };
 
-        await api.post('/mail', emailPayload);
+        console.log("Chegou até aqui");
+
+        await api.post('/mail/', emailPayload);
 
         alert('E-mail de comprovação enviado com sucesso!');
         setIsopen(false); // Fecha o modal após o envio
