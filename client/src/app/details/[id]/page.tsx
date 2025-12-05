@@ -8,11 +8,18 @@ import api from "@/services/api";
 import ModalPetConsult from "@/components/ModalPetConsult";
 import LoadingPet from "@/components/LoadingPet";
 
+enum ConsultType{
+	FIRST = "FIRST",
+	RETURN = "RETURN",
+	CHECKUP = "CHECKUP",
+	VACINATION = "VACINATION"
+}
+
 interface Consulta {
     id: number;
     patientId: number;
     datetime: string;
-    type: string;
+    type: ConsultType;
     description: string;
     doctorName: string;
 }
@@ -23,6 +30,14 @@ interface Paciente {
     tutorName: string;
     age: number;
     species: string;
+}
+
+// mapeamento do tipo de consulta
+const ConsultTypeValues: Record<ConsultType, string> = {
+    [ConsultType.FIRST]: "Primeira consulta",
+    [ConsultType.RETURN]: "Retorno",
+    [ConsultType.CHECKUP]: "Check-up",
+    [ConsultType.VACINATION]: "Vacinação",
 }
 
 const getConsulta = async (id: number) => {
@@ -154,7 +169,7 @@ export default function Detalhes() {
                             Tipo de consulta:
                         </h3>
                         <span className="bg-blue-200 text-blue-800 px-5 py-1 rounded-md font-semibold text-sm">
-                            {consulta?.type}
+                            {consulta && ConsultTypeValues[consulta.type]}
                         </span>
                     </div>
 
@@ -181,7 +196,7 @@ export default function Detalhes() {
                             id={consulta.id}
                             dataHora={formatarData(consulta.datetime)}         
                             nomeVeterinario={consulta.doctorName} 
-                            tipoConsulta={consulta.type as "Vacinação" | "Primeira Consulta" | "Retorno" | "Check-up"}
+                            tipoConsulta={ConsultTypeValues[consulta.type] as "Vacinação" | "Primeira Consulta" | "Retorno" | "Check-up"}
                         />))}
                     </div>
                 </section>
