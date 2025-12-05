@@ -9,6 +9,8 @@ dotenv.config();
 const app = express();
 const allowedOrigins = [
     'http://localhost:3000',
+    'http://localhost:8081', // mobile application
+    'https://pta-squad-duda.vercel.app/', // deployed web frontend
     'https://pta-squad-duda.onrender.com/' // Frontend em desenvolvimento
 ];
 
