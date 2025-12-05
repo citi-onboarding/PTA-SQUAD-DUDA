@@ -25,6 +25,7 @@ routes.get("/consultas/:id", AppointmentController.getById); // Busca a consulta
 routes.post("/consultas", AppointmentController.create); // Cria uma nova consulta
 routes.put("/consultas/:id", AppointmentController.update); // Atualiza uma consulta existente
 routes.delete("/consultas/:id", AppointmentController.delete); // Deleta uma consulta
+routes.get("/consultas/paciente/:patientId", AppointmentController.getByPatientId);
 
 // Rota do nomemailer
 routes.use('/mail', mailRoutes);
