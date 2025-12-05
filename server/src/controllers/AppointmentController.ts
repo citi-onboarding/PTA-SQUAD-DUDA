@@ -55,6 +55,16 @@ class AppointmentController implements Crud {
 
         return response.status(httpStatus).send({messageFromUpdate});
     };
+
+    getByPatientId = async(request:Request, response:Response) => {
+        const { patientId } = request.params;
+        
+        const {httpStatus, values} = await this.citi.getAll();
+
+        const filteredValues = values.filter((appointment) => appointment.patientId === Number(patientId));
+
+        return response.status(httpStatus).send({ values: filteredValues });
+    };
 }
 
 export default new AppointmentController();
