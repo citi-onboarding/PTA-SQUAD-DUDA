@@ -4,12 +4,12 @@ import MoonStars from "./MoonStars.svg";
 import SunFog from "./SunFog.svg";
 import Alarm from "./alarm.svg";
 
-import SheepPic from "./sheep.png";
-import CatPic from "./cat.png";
-import PigPic from "./pig.png";
-import CowPic from "./cow.png";
-import HorsePic from "./horse.png";
-import DogPic from "./doggo.png";
+import SheepPic from "./sheep.svg";
+import CatPic from "./cat.svg";
+import PigPic from "./pig.svg";
+import CowPic from "./cow.svg";
+import HorsePic from "./horse.svg";
+import DogPic from "./dog.svg";
 
 export {
   CITiPet, CLoudSun, MoonStars, SunFog, Alarm,
